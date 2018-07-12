@@ -16,26 +16,34 @@ $(function () {
 		  pageList: [10, 20, 50, 100, 150, 200],
 		  showFooter: true,
 		  columns: [[
-		    { field: 'ck', checkbox: true },
-		    { field: 'id', title: 'ID', width: 100, align: 'left' },
-		    { field: 'deploymentId', title: 'DID', width: 100, align: 'left' },
+		    /*{ field: 'ck', checkbox: true },*/
+		    { field: 'id', title: 'processDefinitionId', width: 100, align: 'left' },
+		    { field: 'deploymentId', title: 'deploymentId', width: 100, align: 'left' },
 		    { field: 'name', title: '名称', width: 180, align: 'left' },
 		    { field: 'key', title: 'KEY', width: 100, align: 'left' },
-		    { field: 'version', title: '版本号', width: 50, align: 'right' },
-		    { field: 'resourceName', title: 'XML', width: 150, align: 'right' },
-		    { field: 'diagramResourceName', title: '图片', width: 150, align: 'right' },
-		    { field: 'opt',title:'操作',width:100,align:'center',  
-	            formatter:function(val,row,index){  
-	                var btn = "<a class='editcls' onclick='openStartupProcessDialog("+index+")' href='javascript:void(0)>'启动</a>";  
-	                return btn;  
-	            }  
+		    { field: 'version', title: '版本号', width: 50, align: 'left' },
+		    { field: 'resourceName', title: 'XML', width: 180, align: 'left',
+	            formatter:function(val,row,index){
+	            	return "<a target='_blank' href='workflow/resource/read?processDefinitionId="+row.id+"&resourceType=xml'>"+row.resourceName+"</a>";  
+	            }
+		    },
+		    { field: 'diagramResourceName', title: '图片', width: 180, align: 'left',
+	            formatter:function(val,row,index){
+	            	return "<a target='_blank' href='workflow/resource/read?processDefinitionId="+row.id+"&resourceType=image'>"+row.diagramResourceName+"</a>";  
+	            }
+		    },
+		    { field: 'opt',title:'操作',width:100,align:'center',
+	            formatter:function(val,row,index){
+	                var btn = "<a class='qdcls' onclick='openStartupProcessDialog("+index+")'>启动</a>";  
+	                return btn;
+	            }
 	        }
 		  ]],
 		  onBeforeLoad: function (param) {
 		  },
 		  onLoadSuccess: function (data) {
 		     //$('#dg').datagrid('reload');
-			  $('.editcls').linkbutton({text:'编辑',plain:true,iconCls:'icon-edit'});
+			  $('.qdcls').linkbutton({text:'启动',plain:true,iconCls:'icon-qd'});
 		  },
 		  onLoadError: function () {
 		     
