@@ -10,7 +10,8 @@ import javax.servlet.WriteListener;
 public class FilterServletOutputStream extends ServletOutputStream {
 
   private DataOutputStream stream;
-  private WriteListener writeListener;
+  @SuppressWarnings("unused")
+private WriteListener writeListener;
 
   public FilterServletOutputStream(OutputStream output) {
     stream = new DataOutputStream(output);

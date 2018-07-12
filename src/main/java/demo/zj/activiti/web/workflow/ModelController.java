@@ -59,7 +59,8 @@ public class ModelController {
     /**
      * 创建模型
      */
-    @RequestMapping(value = "create", method = RequestMethod.GET)
+    @SuppressWarnings("deprecation")
+	@RequestMapping(value = "create", method = RequestMethod.GET)
     public void create(HttpServletRequest request, HttpServletResponse response) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -92,7 +93,8 @@ public class ModelController {
     /**
      * 创建模型
      */
-    @RequestMapping(value = "create", method = RequestMethod.POST)
+    @SuppressWarnings("deprecation")
+	@RequestMapping(value = "create", method = RequestMethod.POST)
     public void create(@RequestParam("name") String name, @RequestParam("key") String key, @RequestParam("description") String description,
                        HttpServletRequest request, HttpServletResponse response) {
         try {

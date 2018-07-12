@@ -29,6 +29,7 @@ import org.activiti.engine.task.Task;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,6 +39,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import demo.zj.activiti.entity.DataGrid;
+import demo.zj.activiti.entity.ProcessDefEntity;
 import demo.zj.activiti.util.UserUtil;
 
 /**
@@ -70,16 +73,19 @@ public class DynamicFormController {
      * @param model
      * @return
      */
-    @RequestMapping(value = {"process-list", ""})
-    public ModelAndView processDefinitionList(Model model, @RequestParam(value = "processType", required = false) String processType, HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView("/form/dynamic/dynamic-form-process-list", Collections.singletonMap("processType", processType));
+	@RequestMapping(value = {"process-list", ""})
+    @ResponseBody
+    public DataGrid processDefinitionList(@RequestParam(value = "processType", required = false) String processType) {
+    	DataGrid dataGrid = new DataGrid();
+    	List<ProcessDefEntity> retlist = new ArrayList<ProcessDefEntity>();
         List<ProcessDefinition> list = new ArrayList<ProcessDefinition>();
-        if (!StringUtils.equals(processType, "all")) {
+        if (StringUtils.equals(processType, "all")) {
             /*
              * 只读取动态表单的流程
              */
+        	
             ProcessDefinitionQuery query1 = repositoryService.createProcessDefinitionQuery().processDefinitionKey("leave-dynamic-from").active().orderByDeploymentId().desc();
-            list = query1.listPage(0, 10);
+            list= query1.listPage(0, 10);
 
             ProcessDefinitionQuery query2 = repositoryService.createProcessDefinitionQuery().processDefinitionKey("dispatch").active().orderByDeploymentId().desc();
             List<ProcessDefinition> dispatchList = query2.listPage(0, 10);
@@ -87,21 +93,29 @@ public class DynamicFormController {
             ProcessDefinitionQuery query3 = repositoryService.createProcessDefinitionQuery().processDefinitionKey("leave-jpa").active().orderByDeploymentId().desc();
             List<ProcessDefinition> list3 = query3.listPage(0, 10);
 
-            list.addAll(list3);
             list.addAll(dispatchList);
+            list.addAll(list3);
 
             /*page.setResult(list);
             page.setTotalCount(query1.count() + query2.count());*/
+            dataGrid.setTotal(query1.count() + query2.count());
         } else {
             // 读取所有流程
             ProcessDefinitionQuery query = repositoryService.createProcessDefinitionQuery().active().orderByDeploymentId().desc();
             list = query.list();
+            
             /*page.setResult(list);
             page.setTotalCount(query.count());*/
+            dataGrid.setTotal(query.count());
         }
-
-        mav.addObject("page", list);
-        return mav;
+        ProcessDefEntity processDefEntity = null;
+        for (ProcessDefinition processDefinition : list) {
+        	processDefEntity = new ProcessDefEntity();
+        	BeanUtils.copyProperties(processDefinition, processDefEntity);
+        	retlist.add(processDefEntity);
+		}
+        dataGrid.setRows(retlist);
+        return dataGrid;
     }
 
     /**

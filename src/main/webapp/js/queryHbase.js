@@ -34,7 +34,7 @@ $(function () {
                   children : [{
                           text : "流程列表(动态)",
                           attributes : {
-                        	  url : '<iframe width="100%" height="100%" frameborder="0"  src="../form/dynamic/process-list.html" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+                        	  url : '<iframe width="100%" height="100%" frameborder="0"  src="process-list.html" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
                           }
                       }, {
                           text : "任务列表(动态)",

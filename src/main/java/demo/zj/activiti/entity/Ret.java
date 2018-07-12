@@ -1,10 +1,12 @@
 package demo.zj.activiti.entity;
 
+import java.io.Serializable;
+
 import org.springframework.stereotype.Component;
 
 @Component
-public class Ret {
-	
+public class Ret implements Serializable{
+	private static final long serialVersionUID = -4442239844294914457L;
 	public String code="0000";
 	public String message="success";
 	public Object data = new Object();
