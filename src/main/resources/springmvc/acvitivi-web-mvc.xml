@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-4.0.xsd
+            http://www.springframework.org/schema/mvc
+            http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+    
+    <!--配置静态资源访问 **表示的包含自身包和子包的所有文件-->
+    <mvc:resources location="/" mapping="/**/*.html"/>
+    <mvc:resources location="/" mapping="/**/*.htm"/>
+	<mvc:resources location="/" mapping="/**/*.js"/>
+	<mvc:resources location="/" mapping="/**/*.css"/>
+	<mvc:resources location="/" mapping="/**/*.png"/>
+	<mvc:resources location="/" mapping="/**/*.gif"/>
+	<!-- <mvc:resources location="/" mapping="/**/*.xml"/>
+	<mvc:resources location="/" mapping="/**/*.woff"/>
+	<mvc:resources location="/" mapping="/**/*.ttf"/>
+	<mvc:resources location="/" mapping="/**/*.json"/> -->
+    <!-- location指的是本地的真是路径，mapping指的是映射到的虚拟路径。  -->
+    <mvc:resources mapping="/editor-app/**" location="/editor-app/"/>
+    <mvc:resources mapping="/diagram-viewer/**" location="/diagram-viewer/"/>
+	
+    <context:annotation-config/>
+    
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+       <property name="locations">
+           <array>
+              <value>classpath:application.properties</value>
+           </array>
+       </property>
+    </bean>
+    
+    <!-- 只扫描Controller注解 -->       
+	<context:component-scan base-package="demo.zj.activiti.web" use-default-filters="false">
+	    <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<mvc:annotation-driven>
+        <mvc:message-converters>
+        	<bean class="org.springframework.http.converter.ResourceHttpMessageConverter" />  
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper">
+                    <bean class="com.fasterxml.jackson.databind.ObjectMapper">
+                          <!-- 处理responseBody 里面日期类型 -->
+                          <property name="dateFormat">
+                              <bean class="java.text.SimpleDateFormat">
+                                  <constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />
+                              </bean>
+                          </property> 
+                    </bean>
+                </property>
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/html;charset=UTF-8</value>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    
+    	<!-- 支持上传文件 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+
+</beans>
