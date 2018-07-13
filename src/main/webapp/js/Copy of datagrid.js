@@ -34,7 +34,7 @@ $(function () {
 		    },
 		    { field: 'opt',title:'操作',width:100,align:'center',
 	            formatter:function(val,row,index){
-	                var btn = "<a class='qdcls' onclick='openStartupProcessDialog("+index+")'>启动b</a>";  
+	                var btn = "<a class='qdcls' onclick='openStartupProcessDialog("+index+")'>启动</a>";  
 	                return btn;
 	            }
 	        }
@@ -53,17 +53,17 @@ $(function () {
 		});
 });
 
+/*function formatOper(){ 
+	  return '<a href="#" onclick="openStartupProcessDialog('+index+')">启动</a>'; 
+}*/
+
 function openStartupProcessDialog(index){
-	$('#dg').datagrid('selectRow',index);
-	var row = $('#dg').datagrid('getSelected');
-	$("#processDefinitionId").val(row.id);
-	$("#dynamic-form-dialog").dialog({
-	    //title:'启动流程[动态表单]',
-	    title:'启动流程[' + row.name + ']',
-	    //href:'form/dynamic/get-form/start/'+ row.id,
-	    //href:'faqilc.html',
-	    content:"<iframe scrolling='auto' frameborder='0' src='faqilc.html' style='width:100%; height:100%; display:block;'></iframe>"
-	});
-	$('#dynamic-form-dialog').window('center');
-	$("#dynamic-form-dialog").dialog("open");
+	  /*$('#dg').datagrid('selectRow',index);// 关键在这里 
+	  var row = $('#dg').datagrid('getSelected'); 
+	  if (row){ 
+	    $('#dlg').dialog('open').dialog('setTitle','修改学生信息'); 
+	    $('#fm').form('load',row); 
+	    url = '${ctx}updateStudent.do?id='+row.id; 
+	  } */
+	$('#dlg').dialog('open').dialog('setTitle','启动流程[动态表单]'); 
 }

@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import org.activiti.engine.FormService;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
@@ -39,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import demo.zj.activiti.entity.DataGrid;
 import demo.zj.activiti.entity.ProcessDefEntity;
 import demo.zj.activiti.util.UserUtil;
@@ -128,13 +131,13 @@ public class DynamicFormController {
         Map<String, Object> result = new HashMap<String, Object>();
         StartFormDataImpl startFormData = (StartFormDataImpl) formService.getStartFormData(processDefinitionId);
         startFormData.setProcessDefinition(null);
-
-    /*
-     * 读取enum类型数据，用于下拉框
-     */
+        
+	    /*
+	     * 读取enum类型数据，用于下拉框
+	     */
         List<FormProperty> formProperties = startFormData.getFormProperties();
         for (FormProperty formProperty : formProperties) {
-            Map<String, String> values = (Map<String, String>) formProperty.getType().getInformation("values");
+			Map<String, String> values = (Map<String, String>) formProperty.getType().getInformation("values");
             if (values != null) {
                 for (Entry<String, String> enumEntry : values.entrySet()) {
                     logger.debug("enum, key: {}, value: {}", enumEntry.getKey(), enumEntry.getValue());
