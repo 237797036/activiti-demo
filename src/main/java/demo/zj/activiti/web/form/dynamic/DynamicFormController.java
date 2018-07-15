@@ -43,7 +43,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import demo.zj.activiti.entity.DataGrid;
+import demo.zj.activiti.entity.PageParam;
 import demo.zj.activiti.entity.ProcessDefEntity;
+import demo.zj.activiti.entity.Ret;
 import demo.zj.activiti.util.UserUtil;
 
 /**
@@ -54,7 +56,6 @@ import demo.zj.activiti.util.UserUtil;
 @Controller
 @RequestMapping(value = "/form/dynamic")
 public class DynamicFormController {
-
     private Logger logger = LoggerFactory.getLogger(getClass());
     
     @Autowired
@@ -78,7 +79,7 @@ public class DynamicFormController {
      */
 	@RequestMapping(value = {"process-list", ""})
     @ResponseBody
-    public DataGrid processDefinitionList(@RequestParam(value = "processType", required = false) String processType) {
+    public DataGrid processDefinitionList(@RequestParam(value = "processType", required = false) String processType, PageParam pageParam) {
     	DataGrid dataGrid = new DataGrid();
     	List<ProcessDefEntity> retlist = new ArrayList<ProcessDefEntity>();
         List<ProcessDefinition> list = new ArrayList<ProcessDefinition>();
@@ -88,13 +89,13 @@ public class DynamicFormController {
              */
         	
             ProcessDefinitionQuery query1 = repositoryService.createProcessDefinitionQuery().processDefinitionKey("leave-dynamic-from").active().orderByDeploymentId().desc();
-            list= query1.listPage(0, 10);
+            list= query1.listPage(0, 20);
 
             ProcessDefinitionQuery query2 = repositoryService.createProcessDefinitionQuery().processDefinitionKey("dispatch").active().orderByDeploymentId().desc();
-            List<ProcessDefinition> dispatchList = query2.listPage(0, 10);
+            List<ProcessDefinition> dispatchList = query2.listPage(0, 20);
 
             ProcessDefinitionQuery query3 = repositoryService.createProcessDefinitionQuery().processDefinitionKey("leave-jpa").active().orderByDeploymentId().desc();
-            List<ProcessDefinition> list3 = query3.listPage(0, 10);
+            List<ProcessDefinition> list3 = query3.listPage(0, 20);
 
             list.addAll(dispatchList);
             list.addAll(list3);
@@ -225,10 +226,10 @@ public class DynamicFormController {
      * 提交启动流程
      */
     @RequestMapping(value = "start-process/{processDefinitionId}")
-    public String submitStartFormAndStartProcessInstance(@PathVariable("processDefinitionId") String processDefinitionId,
-                                                         @RequestParam(value = "processType", required = false) String processType,
-                                                         RedirectAttributes redirectAttributes,
+    @ResponseBody
+    public Ret submitStartFormAndStartProcessInstance(@PathVariable("processDefinitionId") String processDefinitionId,@RequestParam(value = "processType", required = false) String processType,
                                                          HttpServletRequest request) {
+    	Ret ret = new Ret();
         Map<String, String> formProperties = new HashMap<String, String>();
 
         // 从request中读取参数然后转换
@@ -248,7 +249,9 @@ public class DynamicFormController {
         User user = UserUtil.getUserFromSession(request.getSession());
         // 用户未登录不能操作，实际应用使用权限框架实现，例如Spring Security、Shiro等
         if (user == null || StringUtils.isBlank(user.getId())) {
-            return "redirect:/login?timeout=true";
+        	ret.setCode("0401");
+        	ret.setMessage("还未登录！");
+        	return ret;
         }
         ProcessInstance processInstance = null;
         try {
@@ -258,9 +261,12 @@ public class DynamicFormController {
         } finally {
             identityService.setAuthenticatedUserId(null);
         }
-        redirectAttributes.addFlashAttribute("message", "启动成功，流程ID：" + processInstance.getId());
-
-        return "redirect:/form/dynamic/process-list?processType=" + processType;
+        Map<String, String> retMap = new HashMap<String, String>();
+        retMap.put("message", "启动成功，流程ID：" + processInstance.getId());
+        retMap.put("processType", processType);
+        ret.setData(retMap);
+        return ret;
+        //return "redirect:/form/dynamic/process-list?processType=" + processType;
     }
 
     /**

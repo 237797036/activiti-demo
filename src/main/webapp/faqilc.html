@@ -10,16 +10,20 @@
 <script type="text/javascript" src="easyui/jquery.min.js"></script>
 <script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>   
 <script type="text/javascript" src="easyui/locale/easyui-lang-zh_CN.js"></script> 
-
+<script type="text/javascript" src="js/fqlc.js"></script>
 <link rel="stylesheet" type="text/css" href="easyui/themes/default/easyui.css" />
 <link rel="stylesheet" type="text/css" href="easyui/themes/icon.css" />
-    <script type="text/javascript">
-        // 利用动态表单的功能，做一个标示
-        var processType = '${empty processType ? param.processType : processType}';
-    </script>
+<script type="text/javascript">
+    // 利用动态表单的功能，做一个标示
+    //var processType = '${empty processType ? param.processType : processType}';
+    var processType = "processType";
+    if((processType == "" || processType == undefined || processType == null)){
+    	processType = "param.processType";
+    }
+</script>
 <style type="text/css">
 	.fitem{
-		margin: 5px; 
+		margin: 15px; 
 	}
 	.fitem label{
 		display:inline-block;
@@ -30,12 +34,11 @@
 </head>
 <body>
 	<!-- <div class="ftitle" style="text-align: center;font-size: 26px;padding: 5px;">${pd.name }</div> -->
-	<div id="formDivId">
+	<div id="formDivId"></div>
+	<br>
+	<div style="text-align: center;">
+		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="startProc()">启动流程</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="closeWin()">取消</a>
 	</div>
-		<div style="text-align: center;">
-			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="startProc()">启动流程</a>
-			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="closeWin()">取消</a>
-		</div>
 </body>
-<script type="text/javascript" src="js/fqlc.js"></script>
 </html>

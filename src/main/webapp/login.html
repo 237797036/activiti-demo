@@ -37,7 +37,7 @@
                 data: $('#form1').serialize(),
                 success: function (result) {
                     console.log(result);//打印服务端返回的数据(调试用)
-                    if (result.code == 0000) {
+                    if (result.code == "0000") {
                     	window.location.href="index.html";
                     }
                 },

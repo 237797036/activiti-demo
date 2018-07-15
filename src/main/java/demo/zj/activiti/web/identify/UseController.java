@@ -33,9 +33,6 @@ public class UseController {
     // Activiti Identify Service
     @Autowired
     private IdentityService identityService;
-    
-    @Autowired
-    private Ret ret;
 
     /**
      * 登录系统
@@ -48,6 +45,7 @@ public class UseController {
     @RequestMapping(value = "/logon")
     @ResponseBody
     public Ret logon(@RequestParam("username") String userName, @RequestParam("password") String password, HttpSession session) {
+    	Ret ret = new Ret();
         logger.debug("logon request: {username={}, password={}}", userName, password);
         boolean checkPassword = identityService.checkPassword(userName, password);
         if (checkPassword) {
@@ -70,7 +68,7 @@ public class UseController {
             return ret;
         } else {
         	ret.setCode("9999");
-        	ret.setMessage("failed");
+        	ret.setMessage("登录失败！");
             return ret;
         }
     }
@@ -78,6 +76,7 @@ public class UseController {
     @RequestMapping(value = "/logout")
     @ResponseBody
     public Ret logout(HttpSession session) {
+    	Ret ret = new Ret();
         session.removeAttribute("user");
         return ret;
     }
