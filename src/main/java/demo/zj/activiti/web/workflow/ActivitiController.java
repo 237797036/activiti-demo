@@ -21,6 +21,10 @@ import javax.xml.stream.XMLStreamReader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import demo.zj.activiti.entity.DataGrid;
+import demo.zj.activiti.entity.DeploymentEntity;
+import demo.zj.activiti.entity.ProcessDefEntity;
+import demo.zj.activiti.entity.Ret;
 import demo.zj.activiti.entity.service.activiti.WorkflowProcessDefinitionService;
 import demo.zj.activiti.entity.service.activiti.WorkflowTraceService;
 import demo.zj.activiti.util.UserUtil;
@@ -49,6 +53,7 @@ import org.activiti.spring.ProcessEngineFactoryBean;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -57,8 +62,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * 流程管理控制器
@@ -97,31 +100,40 @@ public class ActivitiController {
      *
      * @return
      */
-    @RequestMapping(value = "/process-list")
-    public ModelAndView processList(HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView("workflow/process-list");
-
-    /*
-     * 保存两个对象，一个是ProcessDefinition（流程定义），一个是Deployment（流程部署）
-     */
-        List<Object[]> objects = new ArrayList<Object[]>();
+	@RequestMapping(value = "/process-list")
+    @ResponseBody
+    public DataGrid processList(HttpServletRequest request) {
+    	DataGrid dataGrid = new DataGrid();
+	    /*
+	     * 保存两个对象，一个是ProcessDefinition（流程定义），一个是Deployment（流程部署）
+	     */
+        List<ProcessDefEntity> retDataList = new ArrayList<ProcessDefEntity>();
 
         /*Page<Object[]> page = new Page<Object[]>(PageUtil.PAGE_SIZE);
         int[] pageParams = PageUtil.init(page, request);*/
 
         ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery().orderByDeploymentId().desc();
         List<ProcessDefinition> processDefinitionList = processDefinitionQuery.listPage(0, 10);
+        
+        ProcessDefEntity processDefEntity = null;
+        DeploymentEntity deploymentEntity = null;
         for (ProcessDefinition processDefinition : processDefinitionList) {
-            String deploymentId = processDefinition.getDeploymentId();
-            Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(deploymentId).singleResult();
-            objects.add(new Object[]{processDefinition, deployment});
-        }
+        	processDefEntity = new ProcessDefEntity();
+        	BeanUtils.copyProperties(processDefinition, processDefEntity);
+        	
+        	Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(processDefinition.getDeploymentId()).singleResult();
+        	deploymentEntity = new DeploymentEntity();
+        	BeanUtils.copyProperties(deployment, deploymentEntity);
+            processDefEntity.setDeploymentEntity(deploymentEntity);
+        	
+        	retDataList.add(processDefEntity);
+		}
 
         /*page.setTotalCount(processDefinitionQuery.count());
         page.setResult(objects);*/
-        mav.addObject("page", objects);
-
-        return mav;
+        dataGrid.setTotal(processDefinitionQuery.count());
+        dataGrid.setRows(retDataList);
+        return dataGrid;
     }
 
     /**
@@ -365,16 +377,19 @@ public class ActivitiController {
      * 挂起、激活流程实例
      */
     @RequestMapping(value = "processdefinition/update/{state}/{processDefinitionId}")
-    public String updateState(@PathVariable("state") String state, @PathVariable("processDefinitionId") String processDefinitionId,
-                              RedirectAttributes redirectAttributes) {
+    public Ret updateState(@PathVariable("state") String state, @PathVariable("processDefinitionId") String processDefinitionId) {
+    	Ret ret = new Ret();
+        Map<String, String> retMap = new HashMap<String, String>();
         if (state.equals("active")) {
-            redirectAttributes.addFlashAttribute("message", "已激活ID为[" + processDefinitionId + "]的流程定义。");
             repositoryService.activateProcessDefinitionById(processDefinitionId, true, null);
+            retMap.put("message", "已激活ID为[" + processDefinitionId + "]的流程定义。");
         } else if (state.equals("suspend")) {
             repositoryService.suspendProcessDefinitionById(processDefinitionId, true, null);
-            redirectAttributes.addFlashAttribute("message", "已挂起ID为[" + processDefinitionId + "]的流程定义。");
+            retMap.put("message", "已挂起ID为[" + processDefinitionId + "]的流程定义。");
         }
-        return "redirect:/workflow/process-list";
+        ret.setData(retMap);
+        return ret;
+        //return "redirect:/workflow/process-list";
     }
 
     /**

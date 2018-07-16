@@ -2,7 +2,7 @@ $(function () {
     //动态树形菜单数据
     var treeData = [{
     	  text : "activiti演示",
-          children : [{
+          children : [/*{
                   text : "普通表单",
                   children : [{
                           text : "请假申请(普通)",
@@ -29,12 +29,12 @@ $(function () {
                           }
                       }
                   ]
-              },{
+              },*/{
                   text : "动态表单",
                   children : [{
                           text : "流程列表(动态)",
                           attributes : {
-                        	  url : '<iframe width="100%" height="100%" frameborder="0"  src="process-list.html" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+                        	  url : '<iframe width="100%" height="100%" frameborder="0"  src="dynamic-form-process-list.html" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
                           }
                       }, {
                           text : "任务列表(动态)",
@@ -53,7 +53,7 @@ $(function () {
                           }
                       }
                   ]
-              },{
+              },/*{
                   text : "外置表单",
                   children : [{
                           text : "流程列表(外置)",
@@ -77,7 +77,44 @@ $(function () {
                           }
                       }
                   ]
-              }
+              },*/{
+            	  text : "管理模块",
+                  children : [{
+                          text : "流程管理",
+                          children : [{
+                                  text : "流程定义及部署管理",
+                                  attributes : {
+                                      url : '<iframe width="100%" height="100%" frameborder="0"  src="process-list.html" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+                                  }
+                              }, {
+                                  text : "模型工作区",
+                                  attributes : {
+                                      url : '<iframe width="100%" height="100%" frameborder="0"  src="jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+         
+                                  }
+                              }
+                          ]
+                      },{
+                          text : "引擎属性",
+        				  attributes : {
+        					  url : '<iframe width="100%" height="100%" frameborder="0"  src="jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+
+        				  }
+                      },{
+                          text : "引擎数据库",
+        				  attributes : {
+        					  url : '<iframe width="100%" height="100%" frameborder="0"  src="jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+
+        				  }
+                      },{
+                          text : "用户与组",
+        				  attributes : {
+        					  url : '<iframe width="100%" height="100%" frameborder="0"  src="jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+
+        				  }
+                      }
+                  ]
+        }
           ]
       }
   ];

@@ -23,3 +23,10 @@ function getRootPath_web() {
             var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);
             return (localhostPaht + projectName);
         }
+
+ 	                if (row.suspended){
+	                    return row.suspended + " | " +"<a href='workflow/processdefinition/update/active/"+row.id+"' onclick='activeProcess("+row.id+")'>激活</a>";
+	                } else {
+	                	return row.suspended + " | " +"<a href='workflow/processdefinition/update/suspend/"+row.id+"' onclick='suspendProcess("+row.id+")'>挂起</a>";  
+	                }       
+        
