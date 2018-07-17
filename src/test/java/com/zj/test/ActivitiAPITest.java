@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.zip.ZipInputStream;
+
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.ProcessEngines;
@@ -20,6 +21,7 @@ import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -31,7 +33,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations={"classpath:applicationContext-test.xml"}) //加载配置文件
 public class ActivitiAPITest {
 	
-    ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+	@Autowired
+    private ProcessEngine processEngine;
 	
     /**
      * 使用activiti框架提供的自动建表方式创建23张表-----没有提供配置文件

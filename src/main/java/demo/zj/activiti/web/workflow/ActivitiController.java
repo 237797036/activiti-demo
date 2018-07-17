@@ -10,17 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import demo.zj.activiti.entity.DataGrid;
 import demo.zj.activiti.entity.DeploymentEntity;
 import demo.zj.activiti.entity.PageParam;
@@ -30,7 +26,6 @@ import demo.zj.activiti.entity.service.activiti.WorkflowProcessDefinitionService
 import demo.zj.activiti.entity.service.activiti.WorkflowTraceService;
 import demo.zj.activiti.util.UserUtil;
 import demo.zj.activiti.util.WorkflowUtils;
-
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.editor.constants.ModelDataJsonConstants;
@@ -377,7 +372,8 @@ public class ActivitiController {
     /**
      * 挂起、激活流程实例
      */
-    @RequestMapping(value = "processdefinition/update/{state}/{processDefinitionId}")
+    @RequestMapping(value = "/processdefinition/update/{state}/{processDefinitionId}")
+    @ResponseBody
     public Ret updateState(@PathVariable("state") String state, @PathVariable("processDefinitionId") String processDefinitionId) {
     	Ret ret = new Ret();
         Map<String, String> retMap = new HashMap<String, String>();
@@ -390,7 +386,6 @@ public class ActivitiController {
         }
         ret.setData(retMap);
         return ret;
-        //return "redirect:/workflow/process-list";
     }
 
     /**

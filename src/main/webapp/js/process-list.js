@@ -1,8 +1,8 @@
-$(function () {
+$(function(){
 	//$('#dlg').dialog('close');
 	$('#processListDg').datagrid({
 		  height: 340,
-		  url: "workflow/process-list?timestamp="+new Date().getTime(),
+		  url: projectName+"/workflow/process-list?timestamp="+new Date().getTime(),
 		  method: 'GET',
 		  //queryParams: { 'id': id },
 		  //idField: 'id',
@@ -27,12 +27,12 @@ $(function () {
 		    {field:'version', title: '版本号', width: 50, align: 'left' },
 		    {field:'resourceName', title: 'XML', width: 180, align: 'left',
 	            formatter:function(val,row,index){
-	            	return "<a target='_blank' href='workflow/resource/read?processDefinitionId="+row.id+"&resourceType=xml'>"+row.resourceName+"</a>";  
+	            	return "<a target='_blank' href='"+projectName+"/workflow/resource/read?processDefinitionId="+row.id+"&resourceType=xml'>"+row.resourceName+"</a>";  
 	            }
 		    },
 		    {field:'diagramResourceName', title: '图片', width: 180, align: 'left',
 	            formatter:function(val,row,index){
-	            	return "<a target='_blank' href='workflow/resource/read?processDefinitionId="+row.id+"&resourceType=image'>"+row.diagramResourceName+"</a>";  
+	            	return "<a target='_blank' href='"+projectName+"/workflow/resource/read?processDefinitionId="+row.id+"&resourceType=image'>"+row.diagramResourceName+"</a>";  
 	            }
 		    },
 		    {field:'deploymentTime', title: '部署时间', width: 100, align: 'left',
@@ -43,15 +43,15 @@ $(function () {
 		    {field:'suspended', title: '是否挂起', width: 100, align: 'left',
 	            formatter:function(val,row,index){
 	                if (row.suspended){
-	                    return row.suspended + " | " +"<a href='javascript:void(0)' onclick='activeProcess("+row.id+")'>激活</a>";
+	                    return row.suspended + " | " +"<a id='activeProcess' href='javascript:void(0)' onclick='activeProcess(\""+row.id+"\")'>激活</a>";
 	                } else {
-	                	return row.suspended + " | " +"<a href='javascript:void(0)' onclick='suspendProcess("+row.id+")'>挂起</a>";  
+	                	return row.suspended + " | " +"<a id='suspendProcess' href='javascript:void(0)' onclick='suspendProcess(\""+row.id+"\")'>挂起</a>";  
 	                }
 	            }
 		    },
 		    {field:'opt',title:'操作',width:100,align:'center',
 	            formatter:function(val,row,index){
-	                var btn = "<a class='qdcls' onclick='openStartupProcessDialog("+index+")'>启动b</a>";  
+	                var btn = "<a class='qdcls' onclick='openStartupProcessDialog("+index+")'>启动</a>";  
 	                return btn;
 	            }
 	        }
@@ -67,31 +67,51 @@ $(function () {
 		  onClickCell: function (rowIndex, field, value) {
 		  }
 		});
-	$('#processListDg').datagrid('reload');
-	
-	function activeProcess(processDefinitionId){
-		//Ajax调用处理
-	    $.ajax({
-	       type: "GET",
-	       url: "workflow/processdefinition/update/active/" + processDefinitionId,
-	       success: function(data){
-	    	   $('#processListDg').datagrid('reload');
-	       }
-	    });
-	}
-
-	function suspendProcess(processDefinitionId){
-		//Ajax调用处理
-	    $.ajax({
-	       type: "GET",
-	       url: "workflow/processdefinition/update/suspend/" + processDefinitionId,
-	       success: function(data){
-	    	   $('#processListDg').datagrid('reload');
-	       }
-	    });
-	}
+	//$('#processListDg').datagrid('reload');
 	
 });
+
+function activeProcess(processDefinitionId){
+	//Ajax调用处理
+    $.ajax({
+       type: "GET",
+       url: projectName+"/workflow/processdefinition/update/active/" + processDefinitionId,
+       success: function(obj){
+    	   var obj = eval('(' + obj + ')');  // change the JSON string to javascript object
+    	   $('#processListDg').datagrid('reload');
+	       if(obj.code == "0000"){
+		       $("#message").text(obj.data.message).css('display','block');
+		       setTimeout(function() {
+		    	  $("#message").hide('slow');
+		       }, 5000);
+	      }else{
+	    	  alert("服务器异常！");
+	      }
+       }
+    });
+}
+
+function suspendProcess(processDefinitionId){
+	//Ajax调用处理
+    $.ajax({
+       type: "GET",
+       url: projectName+"/workflow/processdefinition/update/suspend/" + processDefinitionId,
+       success: function(obj){
+    	   var obj = eval('(' + obj + ')');  // change the JSON string to javascript object
+    	   $('#processListDg').datagrid('reload');
+	       if(obj.code == "0000"){
+		       $("#message").text(obj.data.message).css('display','block');
+		       setTimeout(function() {
+		    	  $("#message").hide('slow');
+		       }, 5000);
+	      }else{
+	    	  alert("服务器异常！");
+	      }
+       }
+    });
+}
+
+
 
 
 

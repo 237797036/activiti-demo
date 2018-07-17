@@ -13,7 +13,7 @@ $(function(){
 	var $form = $('.dynamic-form');
 
 	// 设置表单提交id
-	$form.attr('action','form/dynamic/start-process/' + processDefinitionId);
+	$form.attr('action',projectName+'/form/dynamic/start-process/' + processDefinitionId);
 
     // 添加隐藏域
     if ($('#processType').length == 0) {
@@ -27,7 +27,7 @@ $(function(){
     $.ajax({
         type: "GET",//方法类型
         dataType: "json",//预期服务器返回的数据类型
-        url: "form/dynamic/get-form/start/" + processDefinitionId,
+        url: projectName+"/form/dynamic/get-form/start/" + processDefinitionId,
         success: function (data) {
             //console.log(data);//打印服务端返回的数据(调试用)
             $.each(data.form.formProperties, function(idx, obj) {

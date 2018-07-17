@@ -12,19 +12,19 @@ $(function () {
                       }, {
                           text : "请假办理(普通)",
                           attributes : {
-                              url : '<iframe width="100%" height="100%" frameborder="0"  src="jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+                              url : '<iframe width="100%" height="100%" frameborder="0"  src="'+projectName+'/jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
  
                           }
                       }, {
                           text : "运行中流程(普通)",
                           attributes : {
-                              url : '<iframe width="100%" height="100%" frameborder="0"  src="jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+                              url : '<iframe width="100%" height="100%" frameborder="0"  src="'+projectName+'/jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
  
                           }
                       }, {
                           text : "已结束流程(普通)",
                           attributes : {
-                              url : '<iframe width="100%" height="100%" frameborder="0"  src="jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+                              url : '<iframe width="100%" height="100%" frameborder="0"  src="'+projectName+'/jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
  
                           }
                       }
@@ -34,7 +34,7 @@ $(function () {
                   children : [{
                           text : "流程列表(动态)",
                           attributes : {
-                        	  url : '<iframe width="100%" height="100%" frameborder="0"  src="dynamic-form-process-list.html" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+                        	  url : '<iframe width="100%" height="100%" frameborder="0"  src="'+projectName+'/dynamic-form-process-list.html" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
                           }
                       }, {
                           text : "任务列表(动态)",
@@ -58,7 +58,7 @@ $(function () {
                   children : [{
                           text : "流程列表(外置)",
                           attributes : {
-                        	  url : '<iframe width="100%" height="100%" frameborder="0"  src="jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+                        	  url : '<iframe width="100%" height="100%" frameborder="0"  src="'+projectName+'/jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
                           }
                       }, {
                           text : "任务列表(外置)",
@@ -84,12 +84,12 @@ $(function () {
                           children : [{
                                   text : "流程定义及部署管理",
                                   attributes : {
-                                      url : '<iframe width="100%" height="100%" frameborder="0"  src="process-list.html" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+                                      url : '<iframe width="100%" height="100%" frameborder="0"  src="'+projectName+'/process-list.html" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
                                   }
                               }, {
                                   text : "模型工作区",
                                   attributes : {
-                                      url : '<iframe width="100%" height="100%" frameborder="0"  src="jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+                                      url : '<iframe width="100%" height="100%" frameborder="0"  src="'+projectName+'/jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
          
                                   }
                               }
@@ -97,19 +97,19 @@ $(function () {
                       },{
                           text : "引擎属性",
         				  attributes : {
-        					  url : '<iframe width="100%" height="100%" frameborder="0"  src="jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+        					  url : '<iframe width="100%" height="100%" frameborder="0"  src="'+projectName+'/jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
 
         				  }
                       },{
                           text : "引擎数据库",
         				  attributes : {
-        					  url : '<iframe width="100%" height="100%" frameborder="0"  src="jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+        					  url : '<iframe width="100%" height="100%" frameborder="0"  src="'+projectName+'/jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
 
         				  }
                       },{
                           text : "用户与组",
         				  attributes : {
-        					  url : '<iframe width="100%" height="100%" frameborder="0"  src="jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+        					  url : '<iframe width="100%" height="100%" frameborder="0"  src="'+projectName+'/jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
 
         				  }
                       }

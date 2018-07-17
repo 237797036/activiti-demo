@@ -2,7 +2,7 @@ $(function () {
 	//$('#dlg').dialog('close');
 	$('#dg').datagrid({
 		  height: 340,
-		  url: 'form/dynamic/process-list?timestamp='+new Date().getTime(),
+		  url: projectName+'/form/dynamic/process-list?timestamp='+new Date().getTime(),
 		  method: 'GET',
 		  //queryParams: { 'id': id },
 		  //idField: 'id',
@@ -27,17 +27,17 @@ $(function () {
 		    {field:'version', title: '版本号', width: 50, align: 'left' },
 		    {field:'resourceName', title: 'XML', width: 180, align: 'left',
 	            formatter:function(val,row,index){
-	            	return "<a target='_blank' href='workflow/resource/read?processDefinitionId="+row.id+"&resourceType=xml'>"+row.resourceName+"</a>";  
+	            	return "<a target='_blank' href='"+projectName+"/workflow/resource/read?processDefinitionId="+row.id+"&resourceType=xml'>"+row.resourceName+"</a>";  
 	            }
 		    },
 		    {field:'diagramResourceName', title: '图片', width: 180, align: 'left',
 	            formatter:function(val,row,index){
-	            	return "<a target='_blank' href='workflow/resource/read?processDefinitionId="+row.id+"&resourceType=image'>"+row.diagramResourceName+"</a>";  
+	            	return "<a target='_blank' href='"+projectName+"/workflow/resource/read?processDefinitionId="+row.id+"&resourceType=image'>"+row.diagramResourceName+"</a>";  
 	            }
 		    },
 		    {field:'opt',title:'操作',width:100,align:'center',
 	            formatter:function(val,row,index){
-	                var btn = "<a class='qdcls' onclick='openStartupProcessDialog("+index+")'>启动b</a>";  
+	                var btn = "<a class='qdcls' onclick='openStartupProcessDialog("+index+")'>启动</a>";  
 	                return btn;
 	            }
 	        }
@@ -68,7 +68,7 @@ function openStartupProcessDialog(index){
 	    closed: true,
 	    modal:true,
 	    //href:'faqilc.html',
-	    content:"<iframe scrolling='auto' frameborder='0' src='faqilc.html' style='width:100%; height:99%; display:block;'></iframe>",
+	    content:"<iframe scrolling='auto' frameborder='0' src='"+projectName+"/faqilc.html' style='width:100%; height:99%; display:block;'></iframe>",
 	    /*buttons:[{
 			text:'保存',
 			handler:function(){}
