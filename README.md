@@ -29,4 +29,6 @@ function getRootPath_web() {
 	                } else {
 	                	return row.suspended + " | " +"<a href='workflow/processdefinition/update/suspend/"+row.id+"' onclick='suspendProcess("+row.id+")'>挂起</a>";  
 	                }       
-        
+
+如何使用git提交代码到github主页上(基础)                
+https://blog.csdn.net/u014028392/article/details/76844063

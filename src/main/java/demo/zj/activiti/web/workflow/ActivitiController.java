@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import demo.zj.activiti.entity.DataGrid;
 import demo.zj.activiti.entity.DeploymentEntity;
+import demo.zj.activiti.entity.PageParam;
 import demo.zj.activiti.entity.ProcessDefEntity;
 import demo.zj.activiti.entity.Ret;
 import demo.zj.activiti.entity.service.activiti.WorkflowProcessDefinitionService;
@@ -102,7 +103,7 @@ public class ActivitiController {
      */
 	@RequestMapping(value = "/process-list")
     @ResponseBody
-    public DataGrid processList(HttpServletRequest request) {
+    public DataGrid processList(PageParam pageParam) {
     	DataGrid dataGrid = new DataGrid();
 	    /*
 	     * 保存两个对象，一个是ProcessDefinition（流程定义），一个是Deployment（流程部署）

@@ -1,8 +1,8 @@
 $(function () {
 	//$('#dlg').dialog('close');
-	$('#dg').datagrid({
+	$('#processListDg').datagrid({
 		  height: 340,
-		  url: 'workflow/process-list?timestamp='+new Date().getTime(),
+		  url: "workflow/process-list?timestamp="+new Date().getTime(),
 		  method: 'GET',
 		  //queryParams: { 'id': id },
 		  //idField: 'id',
@@ -43,9 +43,9 @@ $(function () {
 		    {field:'suspended', title: '是否挂起', width: 100, align: 'left',
 	            formatter:function(val,row,index){
 	                if (row.suspended){
-	                    return row.suspended + " | " +"<a  onclick='activeProcess("+row.id+")'>激活</a>";
+	                    return row.suspended + " | " +"<a href='javascript:void(0)' onclick='activeProcess("+row.id+")'>激活</a>";
 	                } else {
-	                	return row.suspended + " | " +"<a  onclick='suspendProcess("+row.id+")'>挂起</a>";  
+	                	return row.suspended + " | " +"<a href='javascript:void(0)' onclick='suspendProcess("+row.id+")'>挂起</a>";  
 	                }
 	            }
 		    },
@@ -59,7 +59,7 @@ $(function () {
 		  onBeforeLoad: function (param) {
 		  },
 		  onLoadSuccess: function (data) {
-			  $('.qdcls').linkbutton({text:'发起流程',plain:true,iconCls:'icon-qd'});
+			  //$('.qdcls').linkbutton({text:'发起流程',plain:true,iconCls:'icon-qd'});
 		  },
 		  onLoadError: function () {
 		     
@@ -67,14 +67,15 @@ $(function () {
 		  onClickCell: function (rowIndex, field, value) {
 		  }
 		});
-	//$('#dg').datagrid('reload');
+	$('#processListDg').datagrid('reload');
+	
 	function activeProcess(processDefinitionId){
 		//Ajax调用处理
 	    $.ajax({
 	       type: "GET",
 	       url: "workflow/processdefinition/update/active/" + processDefinitionId,
 	       success: function(data){
-	    	   $('#dg').datagrid('reload');
+	    	   $('#processListDg').datagrid('reload');
 	       }
 	    });
 	}
@@ -85,9 +86,12 @@ $(function () {
 	       type: "GET",
 	       url: "workflow/processdefinition/update/suspend/" + processDefinitionId,
 	       success: function(data){
-	    	   $('#dg').datagrid('reload');
+	    	   $('#processListDg').datagrid('reload');
 	       }
 	    });
 	}
+	
 });
+
+
 
