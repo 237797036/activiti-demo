@@ -68,9 +68,11 @@ $(document).ready(function (){
 		  onClickCell: function (rowIndex, field, value) {
 		  }
 		});
-	//$('#processListDg').datagrid('reload');
-	
 });
+
+function deployBtn(){
+	$('#deployFieldset').toggle('fast');
+}
 
 /**
  * 激活流程
@@ -118,6 +120,30 @@ function suspendProcess(processDefinitionId){
 	      }
        }
     });
+}
+
+/**
+ * 部署流程
+ */
+function deploy(){
+	// call 'submit' method of form plugin to submit the form    
+	$('#deploy-form').form('submit', {
+		url: projectName+"/workflow/deploy",
+	    onSubmit: function(){
+	    },    
+	    success:function(obj){
+	       var obj = eval('(' + obj + ')');  // change the JSON string to javascript object
+	       if(obj.code == "0000"){
+	    	   $('#processListDg').datagrid('reload');
+		       $("#message").text(obj.data.message).css('display','block');
+		       setTimeout(function() {
+		    	   $("#message").hide('slow');
+		       }, 5000);
+	      }else{
+	    	  alert(obj.message);
+	      }
+	    }
+	}); 
 }
 
 /**

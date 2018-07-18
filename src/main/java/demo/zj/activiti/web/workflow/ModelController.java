@@ -4,13 +4,17 @@ import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import demo.zj.activiti.entity.DataGrid;
 import demo.zj.activiti.entity.Ret;
+
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.editor.constants.ModelDataJsonConstants;
@@ -97,10 +101,12 @@ public class ModelController {
     /**
      * 创建模型
      */
-    @SuppressWarnings("deprecation")
+	@SuppressWarnings("deprecation")
 	@RequestMapping(value = "create", method = RequestMethod.POST)
-    public void create(@RequestParam("name") String name, @RequestParam("key") String key, @RequestParam("description") String description,
-                       HttpServletRequest request, HttpServletResponse response) {
+	@ResponseBody
+    public Ret create(@RequestParam("name") String name, @RequestParam("key") String key, @RequestParam("description") String description) {
+		Ret ret = new Ret();
+		Map<String, String> retMap = new HashMap<String, String>();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             ObjectNode editorNode = objectMapper.createObjectNode();
@@ -122,11 +128,16 @@ public class ModelController {
 
             repositoryService.saveModel(modelData);
             repositoryService.addModelEditorSource(modelData.getId(), editorNode.toString().getBytes("utf-8"));
-
-            response.sendRedirect(request.getContextPath() + "/modeler.html?modelId=" + modelData.getId());
+            
+            retMap.put("modelId", modelData.getId());
+            ret.setData(retMap);
+            //response.sendRedirect(request.getContextPath() + "/modeler.html?modelId=" + modelData.getId());
         } catch (Exception e) {
-            logger.error("创建模型失败：", e);
+        	logger.error("创建模型失败：", e);
+			ret.setCode("9999");
+			ret.setMessage("创建模型失败！");
         }
+        return ret;
     }
 
     /**
@@ -155,7 +166,6 @@ public class ModelController {
         }
         ret.setData(retMap);
         return ret;
-        //return "redirect:/workflow/model/list";
     }
 
     /**

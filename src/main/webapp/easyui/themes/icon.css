@@ -10,6 +10,12 @@
 .icon-qd{
 	background:url('icons/qd.png') no-repeat center center;
 }
+.icon-deploy{
+	background:url('icons/deploy.png') no-repeat center center;
+}
+.icon-document{
+	background:url('icons/document.png') no-repeat center center;
+}
 .icon-clear{
 	background:url('icons/clear.png') no-repeat center center;
 }

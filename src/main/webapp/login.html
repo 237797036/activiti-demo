@@ -5,51 +5,50 @@
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="cache-control" content="no-cache">
 <meta http-equiv="expires" content="0">    
-<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<title>登录页</title>
-	<link rel="stylesheet" type="text/css" href="easyui/themes/default/easyui.css">
-	<link rel="stylesheet" type="text/css" href="easyui/themes/icon.css">
-	<script type="text/javascript" src="easyui/jquery.min.js"></script>
-	<script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
-	<script type="text/javascript" src="js/base.js"></script>
-    <style type="text/css">
-        .login-center {
-            width: 600px;
-            margin-left:auto;
-            margin-right:auto;
-        }
-        #loginContainer {
-            margin-top: 3em;
-        }
-        .login-input {
-            padding: 4px 6px;
-            font-size: 14px;
-            vertical-align: middle;
-        }
-    </style>
- <script type="text/javascript">
-        function login() {
-            $.ajax({
-            	//几个参数需要注意一下
-                type: "GET",//方法类型
-                dataType: "json",//预期服务器返回的数据类型
-                url: projectName+"/user/logon" ,//url
-                data: $('#form1').serialize(),
-                success: function (result) {
-                    console.log(result);//打印服务端返回的数据(调试用)
-                    if (result.code == "0000") {
-                    	window.location.href=projectName+"/index.html";
-                    }
-                },
-                error : function() {
-                    alert("异常！");
-                }
-            });
-        }
-    </script>
+<title>登录页</title>
+<link rel="stylesheet" type="text/css" href="easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="easyui/themes/icon.css">
+<script type="text/javascript" src="easyui/jquery.min.js"></script>
+<script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="js/base.js"></script>
+<style type="text/css">
+.login-center {
+	width: 600px;
+	margin-left: auto;
+	margin-right: auto;
+}
 
+#loginContainer {
+	margin-top: 3em;
+}
+
+.login-input {
+	padding: 4px 6px;
+	font-size: 14px;
+	vertical-align: middle;
+}
+</style>
+<script type="text/javascript">
+	function login() {
+		$.ajax({
+			//几个参数需要注意一下
+			type : "GET",//方法类型
+			dataType : "json",//预期服务器返回的数据类型
+			url : projectName + "/user/logon",//url
+			data : $('#form1').serialize(),
+			success : function(result) {
+				console.log(result);//打印服务端返回的数据(调试用)
+				if (result.code == "0000") {
+					window.location.href = projectName + "/index.html";
+				}
+			},
+			error : function() {
+				alert("异常！");
+			}
+		});
+	}
+</script>
 </head>
-
 <body>
     <div id="loginContainer" class="login-center">
 

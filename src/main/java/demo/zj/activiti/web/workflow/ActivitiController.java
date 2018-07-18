@@ -10,13 +10,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import demo.zj.activiti.entity.DataGrid;
 import demo.zj.activiti.entity.DeploymentEntity;
 import demo.zj.activiti.entity.PageParam;
@@ -26,6 +29,7 @@ import demo.zj.activiti.entity.service.activiti.WorkflowProcessDefinitionService
 import demo.zj.activiti.entity.service.activiti.WorkflowTraceService;
 import demo.zj.activiti.util.UserUtil;
 import demo.zj.activiti.util.WorkflowUtils;
+
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.editor.constants.ModelDataJsonConstants;
@@ -259,9 +263,22 @@ public class ActivitiController {
         }
     }
 
+    /**
+     * 部署流程
+     * @param exportDir
+     * @param file
+     * @return
+     */
     @RequestMapping(value = "/deploy")
-    public String deploy(@Value("#{APP_PROPERTIES['export.diagram.path']}") String exportDir, @RequestParam(value = "file", required = false) MultipartFile file) {
-
+    @ResponseBody
+    public Ret deploy(@Value("#{APP_PROPERTIES['export.diagram.path']}") String exportDir, @RequestParam(value = "file", required = false) MultipartFile file) {
+    	Ret ret = new Ret();
+    	if(file.getSize() <= 0){
+    		ret.setCode("0001");
+    		ret.setMessage("请选择文件！");
+    		return ret;
+    	}
+    	Map<String, String> retMap = new HashMap<String, String>();
         String fileName = file.getOriginalFilename();
 
         try {
@@ -281,12 +298,14 @@ public class ActivitiController {
             for (ProcessDefinition processDefinition : list) {
                 WorkflowUtils.exportDiagramToFile(repositoryService, processDefinition, exportDir);
             }
-
+            retMap.put("message", "部署成功，部署ID=" + deployment.getId());
         } catch (Exception e) {
+        	ret.setCode("9999");
+        	ret.setMessage("部署失败！");
             logger.error("error on deploy process, because of file input stream", e);
         }
-
-        return "redirect:/workflow/process-list";
+        ret.setData(retMap);
+        return ret;
     }
 
     /**

@@ -92,7 +92,6 @@ function startProc(){
 				//$.messager.progress('close');	// 如果表单是无效的则隐藏进度条
 			}
 			return isValid;	// 返回false终止表单提交
-
 	    },    
 	    success:function(obj){
 	       var obj = eval('(' + obj + ')');  // change the JSON string to javascript object

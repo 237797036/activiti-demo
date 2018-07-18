@@ -39,6 +39,13 @@ $(document).ready(function (){
 	            }
 	        }
 		  ]],
+		  /*toolbar: [
+	                { text: '增加', iconCls: 'icon-add', handler: function () {  } },
+	                { text: '修改', iconCls: 'icon-edit', handler: function () {  } },
+	                { text: '删除', iconCls: 'icon-remove', handler: function () {  } },
+	                { text: '查看', handler: function () { } }, '-',
+	                { text: '刷新', iconCls: 'icon-reload', handler: function () {  } },
+	                { text: '导出', iconCls: 'icon-save', handler: function () {  } }, '-'],*/
 		  onBeforeLoad: function (param) {
 		  },
 		  onLoadSuccess: function (data) {
@@ -94,4 +101,29 @@ function delModel(modelId){
 	      }
        }
     });
+}
+
+/**
+ * 创建模型
+ */
+function createModelBtn(){
+	$('#modelDialog').dialog({
+	    title:'创建模型',
+	    width: 400,
+	    height: 300,
+	    resizable:true,
+	    closed: true,
+	    modal:true,
+	    //href:'faqilc.html',
+	    content:"<iframe scrolling='auto' frameborder='0' src='"+projectName+"/createModel.html' style='width:100%; height:99%; display:block;'></iframe>",
+	    /*buttons:[{
+			text:'保存',
+			handler:function(){}
+		},{
+			text:'关闭',
+			handler:function(){}
+		}]*/
+	});
+	$("#modelDialog").dialog("open");
+	$('#modelDialog').window('center');
 }

@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>流程列表</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="cache-control" content="no-cache">
 <meta http-equiv="expires" content="0">    
-<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-<title>流程列表</title>
 <script type="text/javascript" src="easyui/jquery.min.js"></script>
 <script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>   
 <script type="text/javascript" src="easyui/locale/easyui-lang-zh_CN.js"></script>
@@ -15,13 +14,19 @@
 <link rel="stylesheet" type="text/css" href="easyui/themes/default/easyui.css" />
 <link rel="stylesheet" type="text/css" href="easyui/themes/icon.css" />
 <style type="text/css">
-	.alertsucc{
-		background:#fbe3e4;
-		color:#8a1f11;
-		border-color:#fbc2c4;
-		margin-bottom:1em;
-		border:2px solid #ddd;
-	}
+.alertsucc {
+	background: #fbe3e4;
+	color: #8a1f11;
+	border-color: #fbc2c4;
+	margin-bottom: 1em;
+	border: 2px solid #ddd;
+}
+
+.info {
+	background: #d5edf8;
+	color: #205791;
+	border-color: #92cae4;
+}
 </style>
 </head>
 <body>
@@ -48,8 +53,22 @@
 	        </form>
 	    </div> -->
 	
-	    <div data-options="region:'center',split:false">
+	    <div data-options="region:'center',split:false,fit:true" style="padding-bottom:30px;">
 			<div id="message" class="alertsucc" style="display:none;"></div>
+			
+			<div style="text-align: right;padding: 2px 2px 2px">
+				<div id="msginf" class="info" style="display:inline;"><b>提示：</b>点击xml或者png链接可以查看具体内容！</div>
+				<a class="easyui-linkbutton" data-options="iconCls:'icon-document'" href='javascript:void(0)' onclick="deployBtn()">部署流程</a>
+			</div>
+			<fieldset id="deployFieldset" style="display: none">
+				<legend>部署新流程</legend>
+				<div><b>支持文件格式：</b>zip、bar、bpmn、bpmn20.xml</div>
+				<form id='deploy-form' method="post" enctype="multipart/form-data">
+					<input type="file" name="file" />
+					<a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="deploy()" href='#'>提交部署</a>
+				</form>
+			</fieldset>
+			
 			<div id="processListDg" fit="true"></div>
 		</div>
 	  </div>

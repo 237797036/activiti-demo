@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>发起流程</title>
+<title>创建模型</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="cache-control" content="no-cache">
@@ -10,35 +10,42 @@
 <script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>   
 <script type="text/javascript" src="easyui/locale/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="js/base.js"></script>
-<script type="text/javascript" src="js/fqlc.js"></script>
+<script type="text/javascript" src="js/createModel.js"></script>
 <link rel="stylesheet" type="text/css" href="easyui/themes/default/easyui.css" />
 <link rel="stylesheet" type="text/css" href="easyui/themes/icon.css" />
-<script type="text/javascript">
-    // 利用动态表单的功能，做一个标示
-    //var processType = '${empty processType ? param.processType : processType}';
-    var processType = "processType";
-    if((processType == "" || processType == undefined || processType == null)){
-    	processType = "param.processType";
-    }
-</script>
 <style type="text/css">
 	.fitem{
-		margin: 15px; 
+		margin: 5px; 
 	}
 	.fitem label{
 		display:inline-block;
-		width: 100px;	
+		width: 50px;	
 		text-align: right;	
 	}
 </style>
 </head>
 <body>
 	<!-- <div class="ftitle" style="text-align: center;font-size: 26px;padding: 5px;">${pd.name }</div> -->
-	<div id="formDivId"></div>
+	<div id="formDivId">
+	   <form id="modelForm" target="_blank" method="post">
+		<div class="fitem">
+			<label>名称：</label>
+			<input id="name" name="name" class="easyui-validatebox" />
+		</div>
+		<div class="fitem">
+			<label>KEY：</label>
+			<input id="key" name="key" type="text" />
+		</div>
+		<div class="fitem">
+			<label>描述：</label>
+			<textarea id="description" name="description" style="width:280px;height: 50px;"></textarea>
+		</div>		
+       </form>
+	</div>
 	<br>
 	<div style="text-align: center;">
-		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="startProc()">启动流程</a>
-		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="closeWin()">取消</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save'" onclick="createModel()">创建</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onclick="closeWin()">取消</a>
 	</div>
 </body>
 </html>
