@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>流程列表</title>
+<script type="text/javascript" src="easyui/jquery.min.js"></script>
+<script type="text/javascript" src="easyui/jquery.easyui.min.js"></script>   
+<script type="text/javascript" src="easyui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="js/base.js"></script>
+<script type="text/javascript" src="js/model-list.js"></script>
+<link rel="stylesheet" type="text/css" href="easyui/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="easyui/themes/icon.css" />
+<style type="text/css">
+	.alertsucc{
+		background:#fbe3e4;
+		color:#8a1f11;
+		border-color:#fbc2c4;
+		margin-bottom:1em;
+		border:2px solid #ddd;
+	}
+</style>
+</head>
+<body>
+	 <div class="easyui-layout" fit="true" border="false">
+	     <!--由于查询需要输入条件，但是以toolbar的形式不好，所以我们在Layout框架的头部north中书写查询的相关信息-->
+	     <!-- 这里我们尽量使其展示的样式与toolbar的样式相似，所以我们先查找toolbar的样式，并复制过来-->
+	     <!-- <div data-options="region:'north',title:'高级查询'" style="height: 100px; background: #F4F4F4;">
+	         <form id="searchForm">
+	             <table>
+	                 <tr>
+	                     <th>用户姓名：</th>
+	                     <td><input name="name" /></td>
+	                 </tr>
+	                 <tr>
+	                     <th>创建开始时间</th>
+	                     <td><input class="easyui-datetimebox" editable="false" name="subStartTime" /></td>
+	                     由于datebox框架上面的数据必须是时间格式的，所以我们用editable="false"来禁止用户手动输入，以免报错
+	                     <th>创建结束时间</th>
+	                     <td><input class="easyui-datetimebox" editable="false" name="nsubEndTimeame" /></td>
+	                     <td><a class="easyui-linkbutton" href="javascript:void(0);" onclick="searchFunc();">查找</a></td>
+	                     <td><a class="easyui-linkbutton" href="javascript:void(0);" onclick="clearSearch();">清空</a></td>
+	                 </tr>
+	            </table>
+	        </form>
+	    </div> -->
+	
+	    <div data-options="region:'center',split:false">
+			<div id="message" class="alertsucc" style="display:none;"></div>
+			<div id="modelListDg" fit="true"></div>
+		</div>
+	  </div>
+</body>
+</html>

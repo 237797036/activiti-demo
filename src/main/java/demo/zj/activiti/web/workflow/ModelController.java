@@ -1,15 +1,16 @@
 package demo.zj.activiti.web.workflow;
 
 import java.io.ByteArrayInputStream;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
+import demo.zj.activiti.entity.DataGrid;
+import demo.zj.activiti.entity.Ret;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.editor.constants.ModelDataJsonConstants;
@@ -17,6 +18,7 @@ import org.activiti.editor.language.json.converter.BpmnJsonConverter;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
+import org.activiti.engine.repository.ModelQuery;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,8 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 流程模型控制器
@@ -49,11 +50,14 @@ public class ModelController {
      * 模型列表
      */
     @RequestMapping(value = "list")
-    public ModelAndView modelList() {
-        ModelAndView mav = new ModelAndView("workflow/model-list");
-        List<Model> list = repositoryService.createModelQuery().list();
-        mav.addObject("list", list);
-        return mav;
+    @ResponseBody
+    public DataGrid modelList() {
+    	DataGrid dataGrid = new DataGrid();
+    	ModelQuery modelQuery = repositoryService.createModelQuery();
+        List<Model> list = modelQuery.list();
+        dataGrid.setTotal(modelQuery.count());
+        dataGrid.setRows(list);
+        return dataGrid;
     }
     
     /**
@@ -129,7 +133,10 @@ public class ModelController {
      * 根据Model部署流程
      */
     @RequestMapping(value = "deploy/{modelId}")
-    public String deploy(@PathVariable("modelId") String modelId, RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public Ret deploy(@PathVariable("modelId") String modelId) {
+    	Ret ret = new Ret();
+    	Map<String, String> retMap = new HashMap<String, String>();
         try {
             Model modelData = repositoryService.getModel(modelId);
             ObjectNode modelNode = (ObjectNode) new ObjectMapper().readTree(repositoryService.getModelEditorSource(modelData.getId()));
@@ -140,11 +147,15 @@ public class ModelController {
 
             String processName = modelData.getName() + ".bpmn20.xml";
             Deployment deployment = repositoryService.createDeployment().name(modelData.getName()).addString(processName, new String(bpmnBytes)).deploy();
-            redirectAttributes.addFlashAttribute("message", "部署成功，部署ID=" + deployment.getId());
+            retMap.put("message", "部署成功，部署ID=" + deployment.getId());
         } catch (Exception e) {
+        	ret.setCode("9999");
+        	ret.setMessage("根据模型部署流程失败!");
             logger.error("根据模型部署流程失败：modelId={}", modelId, e);
         }
-        return "redirect:/workflow/model/list";
+        ret.setData(retMap);
+        return ret;
+        //return "redirect:/workflow/model/list";
     }
 
     /**
@@ -201,10 +212,22 @@ public class ModelController {
         }
     }
 
+    /**
+     * 删除模型
+     * @param modelId
+     * @return
+     */
     @RequestMapping(value = "delete/{modelId}")
-    public String delete(@PathVariable("modelId") String modelId) {
-        repositoryService.deleteModel(modelId);
-        return "redirect:/workflow/model/list";
+    @ResponseBody
+    public Ret delete(@PathVariable("modelId") String modelId) {
+    	Ret ret = new Ret();
+    	try {
+    		repositoryService.deleteModel(modelId);
+		} catch (Exception e) {
+			ret.setCode("9999");
+			ret.setMessage("删除失败！");
+		}
+        return ret;
     }
 
 }

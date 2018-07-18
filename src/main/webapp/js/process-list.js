@@ -1,4 +1,4 @@
-$(function(){
+$(document).ready(function (){
 	//$('#dlg').dialog('close');
 	$('#processListDg').datagrid({
 		  height: 340,
@@ -20,8 +20,8 @@ $(function(){
 		  showFooter: true,
 		  columns: [[
 		    /*{ field: 'ck', checkbox: true },*/
-		    {field:'id', title: 'processDefinitionId', width: 100, align: 'left' },
-		    {field:'deploymentId', title: 'deploymentId', width: 100, align: 'left' },
+		    {field:'id', title: '流程定义Id', width: 120, align: 'left' },
+		    {field:'deploymentId', title: '部署Id', width: 100, align: 'left' },
 		    {field:'name', title: '名称', width: 180, align: 'left' },
 		    {field:'key', title: 'KEY', width: 100, align: 'left' },
 		    {field:'version', title: '版本号', width: 50, align: 'left' },
@@ -35,23 +35,24 @@ $(function(){
 	            	return "<a target='_blank' href='"+projectName+"/workflow/resource/read?processDefinitionId="+row.id+"&resourceType=image'>"+row.diagramResourceName+"</a>";  
 	            }
 		    },
-		    {field:'deploymentTime', title: '部署时间', width: 100, align: 'left',
+		    {field:'deploymentTime', title: '部署时间', width: 120, align: 'left',
 	            formatter:function(val,row,index){
 	            	return row.deploymentEntity.deploymentTime;  
 	            }
 		    },
-		    {field:'suspended', title: '是否挂起', width: 100, align: 'left',
+		    {field:'suspended', title: '是否挂起', width: 80, align: 'left',
 	            formatter:function(val,row,index){
 	                if (row.suspended){
-	                    return row.suspended + " | " +"<a id='activeProcess' href='javascript:void(0)' onclick='activeProcess(\""+row.id+"\")'>激活</a>";
+	                    return row.suspended + "&nbsp;|&nbsp;" +"<a href='javascript:void(0)' onclick='activeProcess(\""+row.id+"\")'>激活</a>";
 	                } else {
-	                	return row.suspended + " | " +"<a id='suspendProcess' href='javascript:void(0)' onclick='suspendProcess(\""+row.id+"\")'>挂起</a>";  
+	                	return row.suspended + "&nbsp;|&nbsp;" +"<a href='javascript:void(0)' onclick='suspendProcess(\""+row.id+"\")'>挂起</a>";  
 	                }
 	            }
 		    },
-		    {field:'opt',title:'操作',width:100,align:'center',
+		    {field:'opt',title:'操作',width:125,align:'left',
 	            formatter:function(val,row,index){
-	                var btn = "<a class='qdcls' onclick='openStartupProcessDialog("+index+")'>启动</a>";  
+	                var btn = "<a href='javascript:void(0)' onclick='deleteDeployment(\""+row.deploymentId+"\")'>删除</a>&nbsp;" +
+	                		  "<a href='javascript:void(0)' onclick='convert2model(\""+row.id+"\")'>转换为Model</a>";
 	                return btn;
 	            }
 	        }
@@ -71,6 +72,10 @@ $(function(){
 	
 });
 
+/**
+ * 激活流程
+ * @param processDefinitionId
+ */
 function activeProcess(processDefinitionId){
 	//Ajax调用处理
     $.ajax({
@@ -78,8 +83,8 @@ function activeProcess(processDefinitionId){
        url: projectName+"/workflow/processdefinition/update/active/" + processDefinitionId,
        success: function(obj){
     	   var obj = eval('(' + obj + ')');  // change the JSON string to javascript object
-    	   $('#processListDg').datagrid('reload');
 	       if(obj.code == "0000"){
+	    	   $('#processListDg').datagrid('reload');
 		       $("#message").text(obj.data.message).css('display','block');
 		       setTimeout(function() {
 		    	  $("#message").hide('slow');
@@ -91,6 +96,10 @@ function activeProcess(processDefinitionId){
     });
 }
 
+/**
+ * 挂起流程
+ * @param processDefinitionId
+ */
 function suspendProcess(processDefinitionId){
 	//Ajax调用处理
     $.ajax({
@@ -98,8 +107,8 @@ function suspendProcess(processDefinitionId){
        url: projectName+"/workflow/processdefinition/update/suspend/" + processDefinitionId,
        success: function(obj){
     	   var obj = eval('(' + obj + ')');  // change the JSON string to javascript object
-    	   $('#processListDg').datagrid('reload');
 	       if(obj.code == "0000"){
+	    	   $('#processListDg').datagrid('reload');
 		       $("#message").text(obj.data.message).css('display','block');
 		       setTimeout(function() {
 		    	  $("#message").hide('slow');
@@ -111,7 +120,46 @@ function suspendProcess(processDefinitionId){
     });
 }
 
+/**
+ * 删除部署
+ * @param deploymentId
+ */
+function deleteDeployment(deploymentId){
+	//Ajax调用处理
+    $.ajax({
+       type: "GET",
+       url: projectName+"/workflow/process/delete?deploymentId=" + deploymentId,
+       success: function(obj){
+    	   var obj = eval('(' + obj + ')');  // change the JSON string to javascript object
+	       if(obj.code == "0000"){
+	    	   $('#processListDg').datagrid('reload');
+		       $("#message").text(obj.message).css('display','block');
+		       setTimeout(function() {
+		    	  $("#message").hide('slow');
+		       }, 5000);
+	      }else{
+	    	  alert("服务器异常！");
+	      }
+       }
+    });
+}
 
-
-
-
+/**
+ * 转换为Model
+ * @param processDefinitionId
+ */
+function convert2model(processDefinitionId){
+	//Ajax调用处理
+    $.ajax({
+       type: "GET",
+       url: projectName+"/workflow/process/convert-to-model/" + processDefinitionId,
+       success: function(obj){
+    	   var obj = eval('(' + obj + ')');  // change the JSON string to javascript object
+	       if(obj.code == "0000"){
+	    	   window.location.href=projectName+"/model-list.html"; 
+	      }else{
+	    	  alert("服务器异常！");
+	      }
+       }
+    });
+}

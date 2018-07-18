@@ -205,9 +205,16 @@ public class ActivitiController {
      * @param deploymentId 流程部署ID
      */
     @RequestMapping(value = "/process/delete")
-    public String delete(@RequestParam("deploymentId") String deploymentId) {
-        repositoryService.deleteDeployment(deploymentId, true);
-        return "redirect:/workflow/process-list";
+    @ResponseBody
+    public Ret delete(@RequestParam("deploymentId") String deploymentId) {
+    	Ret ret = new Ret();
+    	try {
+    		repositoryService.deleteDeployment(deploymentId, true);
+		} catch (Exception e) {
+			ret.setCode("9999");
+			ret.setMessage("删除失败！");
+		}
+        return ret;
     }
 
     /**
@@ -282,36 +289,51 @@ public class ActivitiController {
         return "redirect:/workflow/process-list";
     }
 
+    /**
+     * 转换为model
+     * @param processDefinitionId
+     * @return
+     * @throws UnsupportedEncodingException
+     * @throws XMLStreamException
+     */
     @RequestMapping(value = "/process/convert-to-model/{processDefinitionId}")
-    public String convertToModel(@PathVariable("processDefinitionId") String processDefinitionId)
+    @ResponseBody
+    public Ret convertToModel(@PathVariable("processDefinitionId") String processDefinitionId)
             throws UnsupportedEncodingException, XMLStreamException {
-        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
-                .processDefinitionId(processDefinitionId).singleResult();
-        InputStream bpmnStream = repositoryService.getResourceAsStream(processDefinition.getDeploymentId(),
-                processDefinition.getResourceName());
-        XMLInputFactory xif = XMLInputFactory.newInstance();
-        InputStreamReader in = new InputStreamReader(bpmnStream, "UTF-8");
-        XMLStreamReader xtr = xif.createXMLStreamReader(in);
-        BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
+    	Ret ret = new Ret();
+    	try {
+    		ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
+    				.processDefinitionId(processDefinitionId).singleResult();
+    		InputStream bpmnStream = repositoryService.getResourceAsStream(processDefinition.getDeploymentId(),
+    				processDefinition.getResourceName());
+    		XMLInputFactory xif = XMLInputFactory.newInstance();
+    		InputStreamReader in = new InputStreamReader(bpmnStream, "UTF-8");
+    		XMLStreamReader xtr = xif.createXMLStreamReader(in);
+    		BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
+    		
+    		BpmnJsonConverter converter = new BpmnJsonConverter();
+    		com.fasterxml.jackson.databind.node.ObjectNode modelNode = converter.convertToJson(bpmnModel);
+    		Model modelData = repositoryService.newModel();
+    		modelData.setKey(processDefinition.getKey());
+    		modelData.setName(processDefinition.getResourceName());
+    		modelData.setCategory(processDefinition.getDeploymentId());
+    		
+    		ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
+    		modelObjectNode.put(ModelDataJsonConstants.MODEL_NAME, processDefinition.getName());
+    		modelObjectNode.put(ModelDataJsonConstants.MODEL_REVISION, 1);
+    		modelObjectNode.put(ModelDataJsonConstants.MODEL_DESCRIPTION, processDefinition.getDescription());
+    		modelData.setMetaInfo(modelObjectNode.toString());
+    		
+    		repositoryService.saveModel(modelData);
+    		
+    		repositoryService.addModelEditorSource(modelData.getId(), modelNode.toString().getBytes("utf-8"));
+			
+		} catch (Exception e) {
+			ret.setCode("9999");
+			ret.setMessage("转换model失败！");
+		}
 
-        BpmnJsonConverter converter = new BpmnJsonConverter();
-        com.fasterxml.jackson.databind.node.ObjectNode modelNode = converter.convertToJson(bpmnModel);
-        Model modelData = repositoryService.newModel();
-        modelData.setKey(processDefinition.getKey());
-        modelData.setName(processDefinition.getResourceName());
-        modelData.setCategory(processDefinition.getDeploymentId());
-
-        ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
-        modelObjectNode.put(ModelDataJsonConstants.MODEL_NAME, processDefinition.getName());
-        modelObjectNode.put(ModelDataJsonConstants.MODEL_REVISION, 1);
-        modelObjectNode.put(ModelDataJsonConstants.MODEL_DESCRIPTION, processDefinition.getDescription());
-        modelData.setMetaInfo(modelObjectNode.toString());
-
-        repositoryService.saveModel(modelData);
-
-        repositoryService.addModelEditorSource(modelData.getId(), modelNode.toString().getBytes("utf-8"));
-
-        return "redirect:/workflow/model/list";
+    	return ret;
     }
 
     /**
