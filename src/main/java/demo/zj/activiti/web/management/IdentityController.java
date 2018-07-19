@@ -3,8 +3,6 @@ package demo.zj.activiti.web.management;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.GroupQuery;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import demo.zj.activiti.entity.PageParam;
 
 /**
  * 用户、组控制器
@@ -39,18 +38,18 @@ public class IdentityController {
     /**
      * 组列表
      *
-     * @param request
+     * @param pageParam
      * @return
      */
     @RequestMapping("group/list")
-    public ModelAndView groupList(HttpServletRequest request) {
+    public ModelAndView groupList(PageParam pageParam) {
         ModelAndView mav = new ModelAndView("management/group-list");
 
         /*Page<Group> page = new Page<Group>(PageUtil.PAGE_SIZE);
         int[] pageParams = PageUtil.init(page, request);*/
 
         GroupQuery groupQuery = identityService.createGroupQuery();
-        List<Group> groupList = groupQuery.listPage(0, 10);
+        List<Group> groupList = groupQuery.listPage(pageParam.getFirstResult(), pageParam.getMaxResults());
 
         /*page.setResult(groupList);
         page.setTotalCount(groupQuery.count());*/
@@ -99,18 +98,18 @@ public class IdentityController {
     /**
      * 用户列表
      *
-     * @param request
+     * @param pageParam
      * @return
      */
     @RequestMapping("user/list")
-    public ModelAndView userList(HttpServletRequest request) {
+    public ModelAndView userList(PageParam pageParam) {
         ModelAndView mav = new ModelAndView("management/user-list");
 
        /* Page<User> page = new Page<User>(PageUtil.PAGE_SIZE);
         int[] pageParams = PageUtil.init(page, request);*/
 
         UserQuery userQuery = identityService.createUserQuery();
-        List<User> userList = userQuery.listPage(0, 10);
+        List<User> userList = userQuery.listPage(pageParam.getFirstResult(), pageParam.getMaxResults());
 
         // 查询每个人的分组，这样的写法比较耗费性能、时间，仅供读者参考
         Map<String, List<Group>> groupOfUserMap = new HashMap<String, List<Group>>();

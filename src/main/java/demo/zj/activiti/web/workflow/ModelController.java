@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import demo.zj.activiti.entity.DataGrid;
+import demo.zj.activiti.entity.PageParam;
 import demo.zj.activiti.entity.Ret;
 
 import org.activiti.bpmn.converter.BpmnXMLConverter;
@@ -55,10 +56,10 @@ public class ModelController {
      */
     @RequestMapping(value = "list")
     @ResponseBody
-    public DataGrid modelList() {
+    public DataGrid modelList(PageParam pageParam) {
     	DataGrid dataGrid = new DataGrid();
     	ModelQuery modelQuery = repositoryService.createModelQuery();
-        List<Model> list = modelQuery.list();
+        List<Model> list = modelQuery.listPage(pageParam.getFirstResult(), pageParam.getMaxResults());
         dataGrid.setTotal(modelQuery.count());
         dataGrid.setRows(list);
         return dataGrid;

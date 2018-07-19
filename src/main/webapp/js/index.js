@@ -39,7 +39,7 @@ $(function () {
                       }, {
                           text : "任务列表(动态)",
                           attributes : {
-                        	  url : ''
+                        	  url : '<iframe width="100%" height="100%" frameborder="0"  src="'+projectName+'/dynamic-form-task-list.html" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
                           }
                       }, {
                           text : "运行中流程(动态)",
@@ -89,7 +89,7 @@ $(function () {
                               }, {
                                   text : "模型工作区",
                                   attributes : {
-                                      url : '<iframe width="100%" height="100%" frameborder="0"  src="'+projectName+'/jsp/queryPriceStock.jsp" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
+                                      url : '<iframe width="100%" height="100%" frameborder="0"  src="'+projectName+'/model-list.html" style="width:100%;height:100%;margin:0px 0px;"></iframe>'
          
                                   }
                               }

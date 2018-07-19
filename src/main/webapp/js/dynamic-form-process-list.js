@@ -60,7 +60,7 @@ function openStartupProcessDialog(index){
 	$('#dg').datagrid('selectRow',index);
 	var row = $('#dg').datagrid('getSelected');
 	$("#processDefinitionId").val(row.id);
-	$("#dynamic-form-dialog").dialog({
+	$("#dynamic-form-process-dialog").dialog({
 	    title:'启动流程[' + row.name + ']',
 	    width: 450,
 	    height: 300,
@@ -77,6 +77,6 @@ function openStartupProcessDialog(index){
 			handler:function(){}
 		}]*/
 	});
-	$("#dynamic-form-dialog").dialog("open");
-	$('#dynamic-form-dialog').window('center');
+	$("#dynamic-form-process-dialog").dialog("open");
+	$('#dynamic-form-process-dialog').window('center');
 }

@@ -1,6 +1,5 @@
 package demo.zj.activiti.entity;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,9 +10,8 @@ import java.util.List;
 /*
  * 该类为封装JSON的结果数据集， 所以两个变量的名字要对应JSON的格式 并且为了简便省去拼接，我们定义row为List的集合
  */
-@SuppressWarnings("rawtypes")
-public class DataGrid implements Serializable {
-	private static final long serialVersionUID = -3378009226942880804L;
+public class DataGrid extends Ret {
+	private static final long serialVersionUID = -6238592827244702410L;
 
 	public DataGrid() {
 		super();
@@ -22,9 +20,10 @@ public class DataGrid implements Serializable {
 	/**
 	 * 返回结果
 	 */
-	private long total = 0;// 定义total并初始化
+	private long total = 0;// 总记录数
 
-	private List rows = new ArrayList();// 定义List集合的泛型
+	@SuppressWarnings("rawtypes")
+	private List<?> rows = new ArrayList();// easyUI 返回的数据集合
 
 	/*
 	 * setting 、getting 方法
@@ -37,11 +36,11 @@ public class DataGrid implements Serializable {
 		this.total = total;
 	}
 
-	public List getRows() {
+	public List<?> getRows() {
 		return rows;
 	}
 
-	public void setRows(List rows) {
+	public void setRows(List<?> rows) {
 		this.rows = rows;
 	}
 

@@ -107,7 +107,7 @@ function delModel(modelId){
  * 创建模型
  */
 function createModelBtn(){
-	$('#modelDialog').dialog({
+	$('#createModelDialog').dialog({
 	    title:'创建模型',
 	    width: 400,
 	    height: 300,
@@ -124,6 +124,6 @@ function createModelBtn(){
 			handler:function(){}
 		}]*/
 	});
-	$("#modelDialog").dialog("open");
-	$('#modelDialog').window('center');
+	$("#createModelDialog").dialog("open");
+	$('#createModelDialog').window('center');
 }
