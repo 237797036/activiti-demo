@@ -7,7 +7,7 @@ $(function () {
 		  //queryParams: { 'id': id },
 		  //idField: 'id',
 		  loadMsg: "正在努力为您加载数据", //加载数据时向用户展示的语句
-		  striped: true,
+		  striped: true,//是否显示斑马线效果
 		  fitColumns: true, //设置为true将自动使列适应表格宽度以防止出现水平滚动,false则自动匹配大小
 		  singleSelect: false,//是否单选
 		  rownumbers: true,
@@ -26,10 +26,19 @@ $(function () {
 		    {field:'processDefinitionName', title: '流程定义名称', width: 180, align: 'left' },
 		    {field:'activityName', title: '当前节点', width: 100, align: 'left',
 	            formatter:function(val,row,index){
-	            	return "<a target='_blank' title='点击查看流程图' href='"+projectName+"/diagram-viewer/index.html?processDefinitionId="+row.processDefinitionId+"&processInstanceId="+row.processInstanceId+"'>"+row.activityName+"</a>";  
+	            	//return "<a target='_blank' title='点击查看流程图' href='"+projectName+"/diagram-viewer/index.html?processDefinitionId="+row.processDefinitionId+"&processInstanceId="+row.processInstanceId+"'>"+row.activityName+"</a>";
+	                return "<a href='javascript:void(0)' onclick='currentNode("+index+")'>"+row.activityName+"</a>";  
 	            }
 		    },
-		    {field:'suspended', title: '是否挂起', width: 50, align: 'left' }
+		    {field:'suspended', title: '是否挂起', width: 30, align: 'center',
+	            formatter:function(val,row,index){
+	            	if(row.suspended){
+	                    return "是";
+	                } else {
+	                	return "否";  
+	                }
+	            }
+	        }
 		  ]],
 		  onBeforeLoad: function (param) {
 		  },
@@ -38,32 +47,41 @@ $(function () {
 		  onLoadError: function () {
 		     
 		  },
+		  onClickRow: function (rowIndex, field, value) {
+			  $(this).datagrid('unselectRow', rowIndex);
+		  },
 		  onClickCell: function (rowIndex, field, value) {
 		  }
 		});
 });
 
-function openStartupProcessDialog(index){
+/**
+ * 当前节点
+ * @param index
+ */
+function currentNode(index){
+	var myw = document.documentElement.clientWidth * 0.85;
+    var myh = document.documentElement.clientHeight * 0.85;
+	
 	$('#dg').datagrid('selectRow',index);
 	var row = $('#dg').datagrid('getSelected');
-	$("#processDefinitionId").val(row.id);
-	$("#dynamic-form-process-dialog").dialog({
-	    title:'启动流程[' + row.name + ']',
-	    width: 450,
-	    height: 300,
+	var url = projectName + "/diagram-viewer/index.html?processDefinitionId="+row.processDefinitionId+"&processInstanceId="+row.processInstanceId;
+	$("#node-dialog").dialog({
+	    title:'当前节点[' + row.activityName + ']',
+	    /*fit:true,*/
+	    width:myw,
+	    height:myh,
 	    resizable:true,
 	    closed: true,
 	    modal:true,
+	    dragable: false,
 	    //href:'faqilc.html',
-	    content:"<iframe scrolling='auto' frameborder='0' src='"+projectName+"/faqilc.html' style='width:100%; height:99%; display:block;'></iframe>",
-	    /*buttons:[{
-			text:'保存',
-			handler:function(){}
-		},{
+	    content:"<iframe scrolling='auto' frameborder='0' src='"+url+"' style='width:100%; height:99%; display:block;'></iframe>",
+	    buttons:[{
 			text:'关闭',
-			handler:function(){}
-		}]*/
+			handler:function(){$("#node-dialog").dialog("close");}
+		}]
 	});
-	$("#dynamic-form-process-dialog").dialog("open");
-	$('#dynamic-form-process-dialog').window('center');
+	$("#node-dialog").dialog("open");
+	$('#node-dialog').window('center');
 }

@@ -7,7 +7,7 @@ $(document).ready(function (){
 		  //queryParams: { 'id': id },
 		  //idField: 'id',
 		  loadMsg: "正在努力为您加载数据", //加载数据时向用户展示的语句
-		  striped: true,
+		  striped: true,//是否显示斑马线效果
 		  fitColumns: true, //设置为true将自动使列适应表格宽度以防止出现水平滚动,false则自动匹配大小
 		  singleSelect: false,//是否单选
 		  rownumbers: true,
@@ -52,6 +52,9 @@ $(document).ready(function (){
 		      }
 		  },
 		  onLoadError: function () {
+		  },
+		  onClickRow: function (rowIndex, field, value) {
+			  $(this).datagrid('unselectRow', rowIndex);
 		  },
 		  onClickCell: function (rowIndex, field, value) {
 		  }
