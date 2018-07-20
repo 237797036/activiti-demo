@@ -32,41 +32,73 @@ $(function(){
         url: projectName+"/form/dynamic/get-form/task/" + taskId,
         success: function (data) {
             $.each(data.taskFormData.formProperties, function(idx, obj) {
-            	//var readable = this.readable === true? "" : "display:none;";
-            	//var writable = this.writable === true? "name='"+this.id+"'" : "readonly='readonly'";
-            	var writable = this.writable === true? "" : "readonly='readonly'";
-            	var required = this.required === true? "required='true'" : "";
+            	var required = this.required === true? "required='required'" : "";
             	$("<div class='fitem'></div>").appendTo($form);
             	if(!this.readable){
             		$(".fitem:last").attr("style","display:none;");
             	}
             	$(".fitem:last").append("<label>"+this.name+":</label>");
+            	
     			if("string" == this.type.name) {
-    				$(".fitem:last").append("<input "+writable+" id='" + this.id + "' name='fp_" + this.id + "' class='easyui-validatebox' "+required+" />");
+    				var result;
+    				if(this.writable === true) {
+    					result = "<input id='" + this.id + "' name='fp_" + this.id + "' value='" + this.value + "' class='easyui-validatebox' "+required+" />";
+    				} else {
+    					result = "<label>"+this.value+"</label>";
+    				}
+    				$(".fitem:last").append(result);
+    				
     			}else if("long" == this.type.name) {
-    				$(".fitem:last").append("<input "+writable+" id='" + this.id + "' name='fp_" + this.id + "' class='easyui-numberspinner' data-options='increment:1' "+required+" />");
+    				var result;
+    				if(this.writable === true) {
+    					result = "<input id='" + this.id + "' name='fp_" + this.id + "' value='" + this.value + "' class='easyui-numberspinner' data-options='increment:1' "+required+" />";
+    				} else {
+    					result = "<label>"+this.value+"</label>";
+    				}
+    				$(".fitem:last").append(result);
+    				
     			}else if("boolean" == this.type.name) {
-    				$(".fitem:last").append("<input type='checkbox' "+writable+" class='easyui-checkbox' "+required+" />");
+    				var result;
+    				if(this.writable === true) {
+    					result = "<input type='checkbox' id='" + this.id + "' name='fp_" + this.id + "' value='" + this.value + "' class='easyui-checkbox' "+required+" />";
+    				} else {
+    					result = "<label>"+this.value+"</label>";
+    				}
+    				$(".fitem:last").append(result);
+    				
     			}else if("date" == this.type.name) {
-    				$(".fitem:last").append("<input "+writable+" id='" + this.id + "' name='fp_" + this.id + "' class='easyui-datebox' "+required+" />");
-    				//$(".fitem:last").append("<div id='div"+this.id+"' class='easyui-calendar'></div>");
+    				var result;
+    				if(this.writable === true) {
+    					result = "<input id='" + this.id + "' name='fp_" + this.id + "' value='" + this.value + "' class='easyui-datebox' "+required+" />";
+    				} else {
+    					result = "<label>"+this.value+"</label>";
+    				}
+    				$(".fitem:last").append(result);
+    				
     			}else if("enum" == this.type.name) {
     				var result;
     				if(this.writable === true) {
-    					result = "<select id='" + this.id + "' name='fp_" + this.id + "' class='easyui-combobox' style='width:100px'>";
+    					result = "<select id='" + this.id + "' name='fp_" + this.id + "' class='easyui-combobox' style='width:100px;' panelHeight='auto' "+required+">";
+    					result += "<option value=''></option>";
     					$.each(data[this.id], function(k, v) {
     						result += "<option value='" + k + "'>" + v + "</option>";
     					});
-    					 
     					result += "</select>";
     				} else {
-    					result = "<label>"+this.value+":</label>";
+    					result = "<label>"+this.value+"</label>";
     				}
     				$(".fitem:last").append(result);
-    			}else if("users" == this.type.name) {
-    				$(".fitem:last").append("<input "+writable+" class='easyui-validatebox' "+required+" />");
-    			}else{
     				
+    			}else if("users" == this.type.name) {
+    				var result;
+    				if(this.writable === true) {
+    					result = "<input id='" + this.id + "' name='fp_" + this.id + "' value='" + this.value + "' class='easyui-validatebox' "+required+" />";
+    				} else {
+    					result = "<label>"+this.value+"</label>";
+    				}
+    				$(".fitem:last").append(result);
+    				
+    			}else{
     			}
         	});
             
@@ -97,8 +129,8 @@ function handleTask(){
 	    success:function(obj){
 	       var obj = eval('(' + obj + ')');  // change the JSON string to javascript object
 	       if(obj.code == "0000"){
+	    	   parent.window.$("#dynamicFormTaskDg").datagrid('reload');
 		       parent.window.$("#message").text(obj.data.message).css('display','block');
-		       //$("#message",window.parent.document).text(obj.data.message).css('display','block');
 		       setTimeout(function() {
 		    	   parent.window.$("#message").hide('slow');
 		       }, 5000);

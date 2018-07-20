@@ -29,10 +29,7 @@ $(function(){
         dataType: "json",//预期服务器返回的数据类型
         url: projectName+"/form/dynamic/get-form/start/" + processDefinitionId,
         success: function (data) {
-            //console.log(data);//打印服务端返回的数据(调试用)
             $.each(data.form.formProperties, function(idx, obj) {
-            	//var readable = this.readable === true? "" : "display:none;";
-            	//var writable = this.writable === true? "name='"+this.id+"'" : "readonly='readonly'";
             	var writable = this.writable === true? "" : "readonly='readonly'";
             	var required = this.required === true? "required='true'" : "";
             	$("<div class='fitem'></div>").appendTo($form);
@@ -40,6 +37,7 @@ $(function(){
             		$(".fitem:last").attr("style","display:none;");
             	}
             	$(".fitem:last").append("<label>"+this.name+":</label>");
+            	
     			if("string" == this.type.name) {
     				$(".fitem:last").append("<input "+writable+" id='" + this.id + "' name='fp_" + this.id + "' class='easyui-validatebox' "+required+" />");
     			}else if("long" == this.type.name) {
@@ -48,24 +46,23 @@ $(function(){
     				$(".fitem:last").append("<input type='checkbox' "+writable+" class='easyui-checkbox' "+required+" />");
     			}else if("date" == this.type.name) {
     				$(".fitem:last").append("<input "+writable+" id='" + this.id + "' name='fp_" + this.id + "' class='easyui-datebox' "+required+" />");
-    				//$(".fitem:last").append("<div id='div"+this.id+"' class='easyui-calendar'></div>");
     			}else if("enum" == this.type.name) {
     				var result;
     				if(this.writable === true) {
-    					result = "<select id='" + this.id + "' name='fp_" + this.id + "' class='easyui-combobox'>";
+    					result = "<select id='" + this.id + "' name='fp_" + this.id + "' class='easyui-combobox' "+required+">";
     					$.each(data['enum_' + this.id], function(k, v) {
     						result += "<option value='" + k + "'>" + v + "</option>";
     					});
     					 
     					result += "</select>";
     				} else {
-    					result = "<label>"+this.value+":</label>";
+    					result = "<label>"+this.value+"</label>";
     				}
     				$(".fitem:last").append(result);
+    				
     			}else if("users" == this.type.name) {
     				$(".fitem:last").append("<input "+writable+" class='easyui-validatebox' "+required+" />");
     			}else{
-    				
     			}
         	});
             

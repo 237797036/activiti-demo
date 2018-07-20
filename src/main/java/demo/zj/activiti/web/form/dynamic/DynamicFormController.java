@@ -1,7 +1,6 @@
 package demo.zj.activiti.web.form.dynamic;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,14 +39,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import demo.zj.activiti.entity.DataGrid;
 import demo.zj.activiti.entity.PageParam;
 import demo.zj.activiti.entity.ProcessDefEntity;
+import demo.zj.activiti.entity.ProcessInstanceEntity;
 import demo.zj.activiti.entity.Ret;
 import demo.zj.activiti.entity.TaskEntity;
+import demo.zj.activiti.util.ProcessDefinitionCache;
 import demo.zj.activiti.util.UserUtil;
 
 /**
@@ -72,6 +71,8 @@ public class DynamicFormController {
     private HistoryService historyService;
     @Autowired
     private RuntimeService runtimeService;
+    @Autowired
+    private ProcessDefinitionCache processDefinitionCache;
 
     /**
      * 动态form流程列表
@@ -157,7 +158,6 @@ public class DynamicFormController {
     /**
      * 读取Task的表单
      */
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "get-form/task/{taskId}")
     @ResponseBody
     public Map<String, Object> findTaskForm(@PathVariable("taskId") String taskId) throws Exception {
@@ -173,7 +173,8 @@ public class DynamicFormController {
      */
         List<FormProperty> formProperties = taskFormData.getFormProperties();
         for (FormProperty formProperty : formProperties) {
-            Map<String, String> values = (Map<String, String>) formProperty.getType().getInformation("values");
+            @SuppressWarnings("unchecked")
+			Map<String, String> values = (Map<String, String>) formProperty.getType().getInformation("values");
             if (values != null) {
                 for (Entry<String, String> enumEntry : values.entrySet()) {
                     logger.debug("enum, key: {}, value: {}", enumEntry.getKey(), enumEntry.getValue());
@@ -189,8 +190,10 @@ public class DynamicFormController {
      * 办理任务，提交task的并保存form
      */
     @RequestMapping(value = "task/complete/{taskId}")
-    public String completeTask(@PathVariable("taskId") String taskId, @RequestParam(value = "processType", required = false) String processType,
-                               RedirectAttributes redirectAttributes, HttpServletRequest request) {
+    @ResponseBody
+    public Ret completeTask(@PathVariable("taskId") String taskId, @RequestParam(value = "processType", required = false) String processType,
+                               HttpServletRequest request) {
+    	Ret ret = new Ret();
         Map<String, String> formProperties = new HashMap<String, String>();
 
         // 从request中读取参数然后转换
@@ -211,7 +214,9 @@ public class DynamicFormController {
 
         // 用户未登录不能操作，实际应用使用权限框架实现，例如Spring Security、Shiro等
         if (user == null || StringUtils.isBlank(user.getId())) {
-            return "redirect:/login?timeout=true";
+        	ret.setCode("0401");
+        	ret.setMessage("还未登录！");
+        	return ret;
         }
         try {
             identityService.setAuthenticatedUserId(user.getId());
@@ -220,8 +225,11 @@ public class DynamicFormController {
             identityService.setAuthenticatedUserId(null);
         }
 
-        redirectAttributes.addFlashAttribute("message", "任务完成：taskId=" + taskId);
-        return "redirect:/form/dynamic/task/list?processType=" + processType;
+        Map<String, String> retMap = new HashMap<String, String>();
+        retMap.put("message", "任务完成：taskId=" + taskId);
+        retMap.put("processType", processType);
+        ret.setData(retMap);
+        return ret;
     }
 
     /**
@@ -358,16 +366,20 @@ public class DynamicFormController {
     /**
      * 运行中的流程实例
      *
-     * @param model
      * @return
      */
     @RequestMapping(value = "process-instance/running/list")
-    public ModelAndView running(Model model, @RequestParam(value = "processType", required = false) String processType,
+    @ResponseBody
+    public DataGrid running(@RequestParam(value = "processType", required = false) String processType,
     		PageParam pageParam) {
-        ModelAndView mav = new ModelAndView("/form/running-list", Collections.singletonMap("processType", processType));
-
+    	DataGrid dataGrid = new DataGrid();
+    	
+        //ModelAndView mav = new ModelAndView("/form/running-list", Collections.singletonMap("processType", processType));
+    	
+    	List<ProcessInstanceEntity> retlist = new ArrayList<ProcessInstanceEntity>();
         List<ProcessInstance> list = new ArrayList<ProcessInstance>();
-        if (!StringUtils.equals(processType, "all")) {
+        
+        if (StringUtils.equals(processType, "all")) {
             ProcessInstanceQuery leaveDynamicQuery = runtimeService.createProcessInstanceQuery()
                     .processDefinitionKey("leave-dynamic-from").orderByProcessInstanceId().desc().active();
             list = leaveDynamicQuery.listPage(pageParam.getFirstResult(), pageParam.getMaxResults());
@@ -381,32 +393,48 @@ public class DynamicFormController {
                     .processDefinitionKey("leave-jpa").active().orderByProcessInstanceId().desc();
             List<ProcessInstance> list3 = leaveJpaQuery.listPage(pageParam.getFirstResult(), pageParam.getMaxResults());
             list.addAll(list3);
+            
+            dataGrid.setTotal(leaveDynamicQuery.count() + dispatchQuery.count() + leaveJpaQuery.count());
 
             /*page.setResult(list);
             page.setTotalCount(leaveDynamicQuery.count() + dispatchQuery.count());*/
         } else {
             ProcessInstanceQuery dynamicQuery = runtimeService.createProcessInstanceQuery().orderByProcessInstanceId().desc().active();
             list = dynamicQuery.listPage(pageParam.getFirstResult(), pageParam.getMaxResults());
+            
+            dataGrid.setTotal(dynamicQuery.count());
+            
             /*page.setResult(list);
             page.setTotalCount(dynamicQuery.count());*/
         }
-        mav.addObject("page", list);
-        return mav;
+        ProcessInstanceEntity processInstanceEntity = null;
+        String activityName = "";
+        for (ProcessInstance processInstance : list) {
+        	processInstanceEntity = new ProcessInstanceEntity();
+        	BeanUtils.copyProperties(processInstance, processInstanceEntity);
+        	
+        	activityName = processDefinitionCache.getActivityName(processInstance.getProcessDefinitionId(), processInstance.getActivityId());
+        	processInstanceEntity.setActivityName(activityName);
+        	retlist.add(processInstanceEntity);
+		}
+        dataGrid.setRows(retlist);
+        return dataGrid;
     }
 
     /**
      * 已结束的流程实例
      *
-     * @param model
      * @return
      */
     @RequestMapping(value = "process-instance/finished/list")
-    public ModelAndView finished(Model model, @RequestParam(value = "processType", required = false) String processType,
+    @ResponseBody
+    public DataGrid finished(Model model, @RequestParam(value = "processType", required = false) String processType,
     		PageParam pageParam) {
-        ModelAndView mav = new ModelAndView("/form/finished-list", Collections.singletonMap("processType", processType));
+    	DataGrid dataGrid = new DataGrid();
+        //ModelAndView mav = new ModelAndView("/form/finished-list", Collections.singletonMap("processType", processType));
 
         List<HistoricProcessInstance> list = new ArrayList<HistoricProcessInstance>();
-        if (!StringUtils.equals(processType, "all")) {
+        if (StringUtils.equals(processType, "all")) {
             HistoricProcessInstanceQuery leaveDynamicQuery = historyService.createHistoricProcessInstanceQuery()
                     .processDefinitionKey("leave-dynamic-from").finished().orderByProcessInstanceEndTime().desc();
             list = leaveDynamicQuery.listPage(pageParam.getFirstResult(), pageParam.getMaxResults());
@@ -421,6 +449,8 @@ public class DynamicFormController {
 
             list.addAll(list2);
             list.addAll(list3);
+            
+            dataGrid.setTotal(leaveDynamicQuery.count() + dispatchQuery.count() + leaveJpaQuery.count());
 
             /*page.setResult(list);
             page.setTotalCount(leaveDynamicQuery.count() + dispatchQuery.count());*/
@@ -428,12 +458,15 @@ public class DynamicFormController {
             HistoricProcessInstanceQuery dynamicQuery = historyService.createHistoricProcessInstanceQuery()
                     .finished().orderByProcessInstanceEndTime().desc();
             list = dynamicQuery.listPage(pageParam.getFirstResult(), pageParam.getMaxResults());
+            
+            dataGrid.setTotal(dynamicQuery.count());
+            
             /*page.setResult(list);
             page.setTotalCount(dynamicQuery.count());*/
         }
 
-        mav.addObject("page", list);
-        return mav;
+        dataGrid.setRows(list);
+        return dataGrid;
     }
 
 }
